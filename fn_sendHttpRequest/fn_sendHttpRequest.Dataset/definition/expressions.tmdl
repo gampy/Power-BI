@@ -1,0 +1,260 @@
+expression fn_sendHttpRequest = ```
+		let func = (RequestContent as text, optional RawBody as text, optional RequstNo as nullable number) =>  
+		    let 
+		        //fn_checkRequestError Start
+		        fn_checkRequestError = (Response as nullable any, ServerResponse as nullable any) as record =>
+		            if Response[HasError]?
+		                then [HasError = Response[HasError]?, ErrorReason = Response[Error]?[Reason]?, ErrorMessage = Response[Error]?[Message]?, ErrorDetails = Response[Error]?[Details]?]
+		                else 
+		                    if ServerResponse[HasError]? 
+		                        then [ HasError = ServerResponse[HasError]?, ErrorReason = ServerResponse[Error]?[Reason]?, ErrorMessage = ServerResponse[Error]?[Message]?, ErrorDetails = ServerResponse[Error]?[Details]? ]
+		                        else if not ServerResponse[HasError] and ServerResponse[Value] = null
+		                        then [ HasError = true, ErrorReason = "Unknown", ErrorMessage = "Incorrect connection or authorization parameters may have been specified", ErrorDetails = null ]
+		                        else [ HasError = false, ErrorReason = null, ErrorMessage = null, ErrorDetails = null ],
+		        //fn_checkRequestError End
+		
+		        //fn_trySendReques Start
+		        fn_trySendRequest = (AttemptNo as number, ResponseMetaData as table) =>
+		            let
+		                // Request parameteres
+		                NumberInPool = if (RequstNo = null) then 1 else RequstNo,  
+		                RequestDelay =  (Number.IntegerDivide(NumberInPool - 1, HttpRequestPool) + 1) * HttpRequestLatencySec * Number.Power(2, (AttemptNo - 1)) - HttpRequestLatencySec, // throttling
+		                                    
+		                // Request URL, headers, options
+		                // Avoiding a dynamic data source when updating on the Service
+		                Request = #"HTTP(S)://HOST:PORT" & "/api/v1/",
+		                Options = [
+		                        Headers = [
+		                                    #"Authorization" = AuthType & " " & Auth, 
+		                                    #"Content-Type" = "application/json;charset=utf-8",
+		                                    #"Cache-Control" = "no-cache, must-revalidate"
+		                        ],
+		                        RelativePath = RequestContent,
+		                        Content = Text.ToBinary(RawBody),
+		                        Timeout = #duration(0, 0, 0, HttpRequestTimeoutSec),
+		                        IsRetry = true,
+		                        ManualStatusHandling = 
+		                            {
+		                                200, 201, 202,                  // Success, record the request result  
+		                                408, 429, 503, 504, 509,        // Handled error, repeat the request, if failure again - record the request result
+		                                401, 403, 404                   // Handled error, record the request result  
+		                            }
+		                ], 
+		
+		                //Send Request & BufferData
+		                SendRequest = Function.InvokeAfter( () => try Web.Contents(Request, Options), #duration(0, 0, 0, RequestDelay) ),
+		                BufferedData = SendRequest[[HasError]] & [Value = Binary.Buffer(SendRequest[Value])],  //avoid a risk of multple PQ calls      
+		
+		                Error = fn_checkRequestError(BufferedData, try Value.Metadata(SendRequest[Value]?)[Response.Status]?),
+		                HttpResponseStatus = try Value.Metadata(SendRequest[Value]?)[Response.Status]? otherwise null, 
+		                RequestResponseTime = if HttpResponseStatus <> null then DateTime.LocalNow() else null, // avoid lazy evaluation
+		                AppendResponseMetaData = Table.InsertRows(    ResponseMetaData
+		                                                            , Table.RowCount(ResponseMetaData)
+		                                                            , {[  RequstNo = RequstNo
+		                                                                , RequestContent = RequestContent
+		                                                                , RequestBody = RawBody
+		                                                                , AttemptNo = AttemptNo
+		                                                                , RequestDelay = RequestDelay
+		                                                                , RequestResponseTime = RequestResponseTime
+		                                                                , HasError = Error[HasError]
+		                                                                , ErrorReason = Error[ErrorReason]
+		                                                                , ErrorMessage = Error[ErrorMessage]
+		                                                                , ErrorDetails = Error[ErrorDetails]
+		                                                                , HttpResponseStatus = HttpResponseStatus
+		                                                            ]}
+		                                                        ), 
+		                RequestResult = if (Error[HasError]) 
+		                then 
+		                    Record.AddField([], "@metadata", AppendResponseMetaData)
+		                else
+		                    let                                
+		                        HttpRequestResult = if (List.MatchesAny({408, 429, 503, 504, 509}, each _ = HttpResponseStatus) and AttemptNo < HttpRequestMaxAttempts)
+		                                        then
+		                                            @fn_trySendRequest(AttemptNo + 1, AppendResponseMetaData)                                                       // Repeat the request
+		                                        else 
+		                                            Record.AddField(try Json.Document(BufferedData[Value]) otherwise [], "@metadata", AppendResponseMetaData)       // Add @metadata field to the request result
+		                    in
+		                        HttpRequestResult
+		                in
+		                   RequestResult, 
+		        //fn_trySendReques End
+		        
+		        AuthType = "Basic",
+		        Auth = Binary.ToText(
+		                    Text.ToBinary(LOGIN & ":" & PASSWORD
+		                )               
+		                , BinaryEncoding.Base64), 
+		        
+		        HttpRequestPool = SettingsConfigDefault[HttpRequestPool], 
+		        HttpRequestLatencySec = SettingsConfigDefault[HttpRequestLatencySec],
+		        HttpRequestMaxAttempts = SettingsConfigDefault[HttpRequestMaxAttempts],
+		        HttpRequestTimeoutSec = SettingsConfigDefault[HttpRequestTimeoutSec],
+		        ResponseTable = fn_trySendRequest(1, #table(type table[
+		                                                                  RequstNo = number
+		                                                                , RequestContent = text
+		                                                                , RequestBody = text
+		                                                                , AttemptNo = number
+		                                                                , RequestDelay = number
+		                                                                , RequestResponseTime = datetime                                                                
+		                                                                , HasError = logical
+		                                                                , ErrorReason = text
+		                                                                , ErrorMessage = text
+		                                                                , ErrorDetails = text
+		                                                                , HttpResponseStatus = number
+		                                                            ], {}) )
+		    in
+		        ResponseTable,
+		
+		    documentation = [
+		    Documentation.Name =  " fn_sendHttpRequest",
+		    Documentation.Description = " ",
+		    Documentation.LongDescription = " Managing HTTP requests",
+		    Documentation.Category = " Data extraction ",
+		    Documentation.Source = " ",
+		    Documentation.Version = " 1.7 ",
+		    Documentation.Author = " Alexey Zaitsev ",
+		    Documentation.Examples = {[Description =  "",
+		    Code = " fn_sendHttpRequest( ""Users"", null, 1 ) ",
+		    Result = "A record in the format [ @odata.context as text, value as List, @metadata as Table ]"]}
+		    ]
+		in
+		    Value.ReplaceType(func, Value.ReplaceMetadata(Value.Type(func), documentation))
+		```
+	lineageTag: 1e0c6747-aedf-4b46-98a5-63b531fedb60
+	queryGroup: Functions
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+/// Mandatory.The address of the http(s) connection to the server. Use "http(s)://HttpHost:HttpPort" pattern.
+expression HTTP(S)://HOST:PORT = "https://localhost:8886" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 55dbe6ad-607e-4709-88ce-9d0dba4884ba
+	queryGroup: Params
+
+	annotation PBI_ResultType = Text
+
+/// Mandatory.
+expression LOGIN = "admin" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: aaf9e799-8b9c-410b-b42e-b5e39b8ffb52
+	queryGroup: Params
+
+	annotation PBI_ResultType = Text
+
+/// Optional.
+/// The password entered is not hidden behind asterisks!
+expression PASSWORD = "apple" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 4a8abf84-b607-4f7f-a8e1-37fbea6a969f
+	queryGroup: Params
+
+	annotation PBI_ResultType = Text
+
+expression SysHttpRequestData =
+		let
+		    Source = #table(type table[Name = text, Group = text, Data = any],
+		        {
+		            { "query1", "Basic",    #"query1"   },
+		            { "query2", "Basic",    #"query2"   },
+		            { "query3", "Basic",    #"query3"  }
+		        }
+		    )
+		in
+		    Source
+	lineageTag: dd20d5e3-ba1d-4b2c-ae38-576ac0b4a2e3
+	queryGroup: Logging
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Microsoft Wait-Retry Pattern' =
+		let
+		    Value.WaitFor = (producer as function, interval as function, optional count as number) as any =>
+		        let
+		            list = List.Generate(
+		                () => {0, null},
+		                (state) => state{0} <> null and (count = null or state{0} < count),
+		                (state) => if state{1} <> null then {null, state{1}} else {1 + state{0}, Function.InvokeAfter(() => producer(state{0}), interval(state{0}))},
+		                (state) => state{1})
+		        in
+		            List.Last(list),
+		
+		    waitForResult = Value.WaitFor(
+		        (iteration) =>
+		            let
+		                url = "www.exploredata.pro",
+		                result = Web.Contents(url, [ManualStatusHandling = {500}, IsRetry = iteration > 0]),
+		                buffered = Binary.Buffer(result),
+		                status = if buffered = null then 0 else Value.Metadata(result)[Response.Status],
+		                actualResult = if status = 500 then null else buffered
+		            in
+		                actualResult,
+		        (iteration) => #duration(0, 0, 0, Number.Power(2, iteration)),
+		        5)
+		in
+		    if waitForResult = null then
+		        error "Value.WaitFor() Failed after multiple retry attempts"
+		    else
+		        waitForResult
+	lineageTag: 8df59775-f1ff-4680-ac47-2080f88d8e18
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Binary
+
+expression SettingsConfigDefault = ```
+		let
+		    Result =
+						[                       
+							  HttpRequestPool = 2 
+							, HttpRequestLatencySec = 5
+					//		, HttpRequestRecurringLatencySec = 5
+							, HttpRequestMaxAttempts = 3
+							, HttpRequestTimeoutSec = 300
+						]
+		in
+		    Result
+		```
+	lineageTag: 616d824d-67ad-4ecc-90ee-67052e03c876
+	queryGroup: Configuration
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+
+expression query1 =
+		let
+		    Source = fn_sendHttpRequest("ModelCubes()?$select=Name,Rules", null, 1)
+		in
+		    Source
+	lineageTag: 3b815e60-138d-4315-bf44-854d36ef89d4
+	queryGroup: HttpRequests
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+
+expression query2 =
+		let
+		    Source = fn_sendHttpRequest("Configuration", null, 2)
+		in
+		    Source
+	lineageTag: 05e80135-409c-44f1-b06a-6e76e653c6cd
+	queryGroup: HttpRequests
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+
+expression query3 =
+		let
+		    Source = fn_sendHttpRequest("Server", null, 3)
+		in
+		    Source
+	lineageTag: 1c768ccb-7f22-4a10-88b6-3c7a1a1d0540
+	queryGroup: HttpRequests
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+

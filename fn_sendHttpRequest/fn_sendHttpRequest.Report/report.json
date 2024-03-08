@@ -1,0 +1,42 @@
+{
+  "config": "{\"version\":\"5.51\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU02\",\"version\":\"5.51\",\"type\":2}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"slowDataSourceSettings\":{\"isCrossHighlightingDisabled\":false,\"isSlicerSelectionsButtonEnabled\":false,\"isFilterSelectionsButtonEnabled\":false,\"isFieldWellButtonEnabled\":false,\"isApplyAllButtonEnabled\":false},\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY24SU02",
+            "path": "BaseThemes/CY24SU02.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Log",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"880ab169a0e7da81bdbf\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":0,\"z\":0,\"width\":1280,\"height\":720,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"SysHttpRequestLog.Name\"},{\"queryRef\":\"SysHttpRequestLog.Group\"},{\"queryRef\":\"Sum(SysHttpRequestLog.RequstNo)\"},{\"queryRef\":\"SysHttpRequestLog.RequestContent\"},{\"queryRef\":\"SysHttpRequestLog.RequestBody\"},{\"queryRef\":\"Sum(SysHttpRequestLog.AttemptNo)\"},{\"queryRef\":\"Sum(SysHttpRequestLog.RequestDelay)\"},{\"queryRef\":\"SysHttpRequestLog.HasError\"},{\"queryRef\":\"SysHttpRequestLog.ErrorReason\"},{\"queryRef\":\"SysHttpRequestLog.ErrorMessage\"},{\"queryRef\":\"SysHttpRequestLog.ErrorDetails\"},{\"queryRef\":\"Sum(SysHttpRequestLog.HttpResponseStatus)\"},{\"queryRef\":\"SysHttpRequestLog.ServerErrorCode\"},{\"queryRef\":\"SysHttpRequestLog.ServerErrorMessage\"},{\"queryRef\":\"SysHttpRequestLog.IsEmpty\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SysHttpRequestLog\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"AttemptNo\"},\"Name\":\"Sum(SysHttpRequestLog.AttemptNo)\",\"NativeReferenceName\":\"AttemptNo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ErrorDetails\"},\"Name\":\"SysHttpRequestLog.ErrorDetails\",\"NativeReferenceName\":\"ErrorDetails\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ErrorMessage\"},\"Name\":\"SysHttpRequestLog.ErrorMessage\",\"NativeReferenceName\":\"ErrorMessage\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ErrorReason\"},\"Name\":\"SysHttpRequestLog.ErrorReason\",\"NativeReferenceName\":\"ErrorReason\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Group\"},\"Name\":\"SysHttpRequestLog.Group\",\"NativeReferenceName\":\"Group\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"HasError\"},\"Name\":\"SysHttpRequestLog.HasError\",\"NativeReferenceName\":\"HasError\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"HttpResponseStatus\"},\"Name\":\"Sum(SysHttpRequestLog.HttpResponseStatus)\",\"NativeReferenceName\":\"HttpResponseStatus\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"IsEmpty\"},\"Name\":\"SysHttpRequestLog.IsEmpty\",\"NativeReferenceName\":\"IsEmpty\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Name\"},\"Name\":\"SysHttpRequestLog.Name\",\"NativeReferenceName\":\"Name\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequestBody\"},\"Name\":\"SysHttpRequestLog.RequestBody\",\"NativeReferenceName\":\"RequestBody\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequestContent\"},\"Name\":\"SysHttpRequestLog.RequestContent\",\"NativeReferenceName\":\"RequestContent\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequstNo\"},\"Name\":\"Sum(SysHttpRequestLog.RequstNo)\",\"NativeReferenceName\":\"RequstNo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ServerErrorCode\"},\"Name\":\"SysHttpRequestLog.ServerErrorCode\",\"NativeReferenceName\":\"ServerErrorCode\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ServerErrorMessage\"},\"Name\":\"SysHttpRequestLog.ServerErrorMessage\",\"NativeReferenceName\":\"ServerErrorMessage\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequestDelay\"},\"Name\":\"Sum(SysHttpRequestLog.RequestDelay)\",\"NativeReferenceName\":\"RequestDelay\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequstNo\"}}}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"grid\":[{\"properties\":{\"gridHorizontalWeight\":{\"expr\":{\"Literal\":{\"Value\":\"0D\"}}},\"outlineWeight\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}},\"outlineColor\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":1,\"Percent\":0}}}}}}}],\"values\":[{\"properties\":{\"fontFamily\":{\"expr\":{\"Literal\":{\"Value\":\"'Tahoma'\"}}},\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"8D\"}}},\"wordWrap\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}],\"columnHeaders\":[{\"properties\":{\"fontFamily\":{\"expr\":{\"Literal\":{\"Value\":\"'Tahoma'\"}}},\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"8D\"}}},\"bold\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"wordWrap\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"total\":[{\"properties\":{\"totals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"columnWidth\":[{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"74.18093981834531D\"}}}},\"selector\":{\"metadata\":\"Sum(SysHttpRequestLog.AttemptNo)\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"126.96916284707314D\"}}}},\"selector\":{\"metadata\":\"Sum(SysHttpRequestLog.HttpResponseStatus)\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"49.72464461370051D\"}}}},\"selector\":{\"metadata\":\"SysHttpRequestLog.ErrorDetails\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"42.64002841266315D\"}}}},\"selector\":{\"metadata\":\"SysHttpRequestLog.ErrorReason\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"51D\"}}}},\"selector\":{\"metadata\":\"SysHttpRequestLog.ErrorMessage\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"60D\"}}}},\"selector\":{\"metadata\":\"SysHttpRequestLog.IsEmpty\"}}]}}}",
+          "filters": "[]",
+          "height": 720.00,
+          "width": 1280.00,
+          "x": 0.00,
+          "y": 0.00,
+          "z": 0.00
+        }
+      ],
+      "width": 1280.00
+    }
+  ]
+}
