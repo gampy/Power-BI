@@ -74,39 +74,6 @@ table SysHttpRequestLog
 
 		annotation SummarizationSetBy = User
 
-	column HasError
-		dataType: boolean
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: c279c084-def2-41e3-8f92-06ea2c510f61
-		summarizeBy: none
-		sourceColumn: HasError
-
-		annotation SummarizationSetBy = Automatic
-
-	column ErrorReason
-		dataType: string
-		lineageTag: 776c2f96-47c1-4419-966c-ad0d3900154e
-		summarizeBy: none
-		sourceColumn: ErrorReason
-
-		annotation SummarizationSetBy = Automatic
-
-	column ErrorMessage
-		dataType: string
-		lineageTag: 69f2103d-deea-4053-9794-b35f1f3cfffc
-		summarizeBy: none
-		sourceColumn: ErrorMessage
-
-		annotation SummarizationSetBy = Automatic
-
-	column ErrorDetails
-		dataType: string
-		lineageTag: 38b27db1-4336-4ee8-86f6-ff3c102a151e
-		summarizeBy: none
-		sourceColumn: ErrorDetails
-
-		annotation SummarizationSetBy = Automatic
-
 	column HttpResponseStatus
 		dataType: int64
 		formatString: 0
@@ -116,28 +83,61 @@ table SysHttpRequestLog
 
 		annotation SummarizationSetBy = Automatic
 
-	column ServerErrorCode
-		dataType: string
-		lineageTag: a4cb15ff-49b8-4a0b-9f1c-29dc8647bcd2
-		summarizeBy: none
-		sourceColumn: ServerErrorCode
-
-		annotation SummarizationSetBy = Automatic
-
-	column ServerErrorMessage
-		dataType: string
-		lineageTag: 8e280422-5417-48a1-b541-e17ba84f2b26
-		summarizeBy: none
-		sourceColumn: ServerErrorMessage
-
-		annotation SummarizationSetBy = Automatic
-
 	column IsEmpty
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 69333e71-9524-4141-a4db-1f6c516c71e1
 		summarizeBy: none
 		sourceColumn: IsEmpty
+
+		annotation SummarizationSetBy = Automatic
+
+	column HasConnectionError
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: b0056ee4-9257-42dd-b250-c6f73a195f6a
+		summarizeBy: none
+		sourceColumn: HasConnectionError
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConnectionErrorReason
+		dataType: string
+		lineageTag: b946cffb-4837-40c9-aced-7be7efd9871b
+		summarizeBy: none
+		sourceColumn: ConnectionErrorReason
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConnectionErrorMessage
+		dataType: string
+		lineageTag: 88bf6057-bec8-4d2d-a395-d1c17a971f37
+		summarizeBy: none
+		sourceColumn: ConnectionErrorMessage
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConnectionErrorDetails
+		dataType: string
+		lineageTag: 11d9eeb9-46d1-4993-81a5-adbc8295f7cd
+		summarizeBy: none
+		sourceColumn: ConnectionErrorDetails
+
+		annotation SummarizationSetBy = Automatic
+
+	column ResponseErrorCode
+		dataType: string
+		lineageTag: a4e7695e-c777-4f70-91db-581aded0220a
+		summarizeBy: none
+		sourceColumn: ResponseErrorCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column ResponseErrorMessage
+		dataType: string
+		lineageTag: 3908b470-d606-4ffd-82ba-023ba1c7f0b0
+		summarizeBy: none
+		sourceColumn: ResponseErrorMessage
 
 		annotation SummarizationSetBy = Automatic
 
@@ -162,20 +162,20 @@ table SysHttpRequestLog
 				                                                                                        , "AttemptNo"
 				                                                                                        , "RequestResponseTime"
 				                                                                                        , "RequestDelay"
-				                                                                                        , "HasError"
-				                                                                                        , "ErrorReason"
-				                                                                                        , "ErrorMessage"
-				                                                                                        , "ErrorDetails"
+				                                                                                        , "HasConnectionError"
+				                                                                                        , "ConnectionErrorReason"
+				                                                                                        , "ConnectionErrorMessage"
+				                                                                                        , "ConnectionErrorDetails"
 				                                                                                        , "HttpResponseStatus"
 				                                                                                    }
 				                                                ),
-				    ExpendErrorRecord = Table.ExpandRecordColumn(ExpandMetadataTable, "error", {"code", "message"}, {"ServerErrorCode", "ServerErrorMessage"}),
+				    ExpendErrorRecord = Table.ExpandRecordColumn(ExpandMetadataTable, "error", {"code", "message"}, {"ResponseErrorCode", "ResponseErrorMessage"}),
 				    TransformColumnTypes = Table.TransformColumnTypes(ExpendErrorRecord, {
 				                                                                            {"RequstNo", Int64.Type}
 				                                                                            , {"AttemptNo", Int64.Type}
 				                                                                            , {"RequestResponseTime", type datetime}
 				                                                                            , {"RequestDelay", type number}
-				                                                                            , {"HasError", type logical}
+				                                                                            , {"HasConnectionError", type logical}
 				                                                                            , {"HttpResponseStatus", Int64.Type}	
 				    })
 				in

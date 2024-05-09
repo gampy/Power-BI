@@ -28,7 +28,7 @@ queryGroup Logging
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
-annotation PBIDesktopVersion = 2.126.927.0 (24.02)
+annotation PBIDesktopVersion = 2.126.1261.0 (24.02)
 
 annotation PBI_QueryOrder = ["fn_sendHttpRequest","HTTP(S)://HOST:PORT","LOGIN","PASSWORD","SettingsConfigDefault","query1","SysHttpRequestData","SysHttpRequestLog","Microsoft Wait-Retry Pattern","query2","query3"]
 

@@ -43,10 +43,12 @@ expression fn_sendHttpRequest = ```
 		
 		                //Send Request & BufferData
 		                SendRequest = Function.InvokeAfter( () => try Web.Contents(Request, Options), #duration(0, 0, 0, RequestDelay) ),
-		                BufferedData = SendRequest[[HasError]] & [Value = Binary.Buffer(SendRequest[Value])],  //avoid a risk of multple PQ calls      
 		
-		                Error = fn_checkRequestError(BufferedData, try Value.Metadata(SendRequest[Value]?)[Response.Status]?),
-		                HttpResponseStatus = try Value.Metadata(SendRequest[Value]?)[Response.Status]? otherwise null, 
+		                BufferedData = SendRequest[[HasError]] & [Value = Binary.Buffer(SendRequest[Value])],  //avoid a risk of multple PQ calls     
+		                ResponseStatus = try Value.Metadata(SendRequest[Value]?)[Response.Status]?,
+		
+		                Error = fn_checkRequestError(BufferedData, ResponseStatus),
+		                HttpResponseStatus = if ResponseStatus[HasError]? then null else ResponseStatus[Value], 
 		                RequestResponseTime = if HttpResponseStatus <> null then DateTime.LocalNow() else null, // avoid lazy evaluation
 		                AppendResponseMetaData = Table.InsertRows(    ResponseMetaData
 		                                                            , Table.RowCount(ResponseMetaData)
@@ -56,10 +58,10 @@ expression fn_sendHttpRequest = ```
 		                                                                , AttemptNo = AttemptNo
 		                                                                , RequestDelay = RequestDelay
 		                                                                , RequestResponseTime = RequestResponseTime
-		                                                                , HasError = Error[HasError]
-		                                                                , ErrorReason = Error[ErrorReason]
-		                                                                , ErrorMessage = Error[ErrorMessage]
-		                                                                , ErrorDetails = Error[ErrorDetails]
+		                                                                , HasConnectionError = Error[HasError]
+		                                                                , ConnectionErrorReason = Error[ErrorReason]
+		                                                                , ConnectionErrorMessage = Error[ErrorMessage]
+		                                                                , ConnectionErrorDetails = Error[ErrorDetails]
 		                                                                , HttpResponseStatus = HttpResponseStatus
 		                                                            ]}
 		                                                        ), 
@@ -96,10 +98,10 @@ expression fn_sendHttpRequest = ```
 		                                                                , AttemptNo = number
 		                                                                , RequestDelay = number
 		                                                                , RequestResponseTime = datetime                                                                
-		                                                                , HasError = logical
-		                                                                , ErrorReason = text
-		                                                                , ErrorMessage = text
-		                                                                , ErrorDetails = text
+		                                                                , HasConnectionError = logical
+		                                                                , ConnectionErrorReason = text
+		                                                                , ConnectionErrorMessage = text
+		                                                                , ConnectionErrorDetails = text
 		                                                                , HttpResponseStatus = number
 		                                                            ], {}) )
 		    in
@@ -111,8 +113,8 @@ expression fn_sendHttpRequest = ```
 		    Documentation.LongDescription = " Managing HTTP requests",
 		    Documentation.Category = " Data extraction ",
 		    Documentation.Source = " ",
-		    Documentation.Version = " 1.7 ",
-		    Documentation.Author = " Alexey Zaitsev ",
+		    Documentation.Version = " 1.81.bc ",
+		    Documentation.Author = " Alex Zaitsev ",
 		    Documentation.Examples = {[Description =  "",
 		    Code = " fn_sendHttpRequest( ""Users"", null, 1 ) ",
 		    Result = "A record in the format [ @odata.context as text, value as List, @metadata as Table ]"]}
