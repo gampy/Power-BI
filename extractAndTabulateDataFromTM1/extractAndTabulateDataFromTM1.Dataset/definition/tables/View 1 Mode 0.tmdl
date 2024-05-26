@@ -1,0 +1,81 @@
+table 'View 1 Mode 0'
+	lineageTag: 68b6ce97-5a7a-41fa-98d3-9134455c1777
+
+	column 'Tuples.Ordinal'
+		dataType: string
+		lineageTag: d6d6d7ae-7849-4db4-a633-aa9dfbaf62cf
+		summarizeBy: none
+		sourceColumn: Tuples.Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: string
+		lineageTag: f737607d-ef29-452e-abf3-7cab16f8576e
+		summarizeBy: none
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channels
+		dataType: string
+		lineageTag: bbac4610-5e4a-46e6-a68e-79e9856aa29d
+		summarizeBy: none
+		sourceColumn: Channels
+
+		annotation SummarizationSetBy = Automatic
+
+	column Versions
+		dataType: string
+		lineageTag: ea3a4c16-15a8-4f5c-b9b7-7ea299beebe6
+		summarizeBy: none
+		sourceColumn: Versions
+
+		annotation SummarizationSetBy = Automatic
+
+	column Products
+		dataType: string
+		lineageTag: e517a094-789c-4d4d-bdde-3b3ca43c4dde
+		summarizeBy: none
+		sourceColumn: Products
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsidiaries
+		dataType: string
+		lineageTag: d5c7685f-bdbc-4df2-86f0-d5ba87d2c36d
+		summarizeBy: none
+		sourceColumn: Subsidiaries
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales Plan Measures'
+		dataType: string
+		lineageTag: eb3ae39a-624c-4766-b5c1-85b85279bf59
+		summarizeBy: none
+		sourceColumn: Sales Plan Measures
+
+		annotation SummarizationSetBy = Automatic
+
+	column Months
+		dataType: string
+		lineageTag: a0bb33bd-2a48-4c5f-ab59-47f2722c2e86
+		summarizeBy: none
+		sourceColumn: Months
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'View 1 Mode 0' = m
+		mode: import
+		queryGroup: 'Cube Data'
+		source =
+				let
+				    Source =  #"query View 1 Mode 0",
+				    Result = fn_tabulateCubeData(Source[Cells])
+				in
+				    Result
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

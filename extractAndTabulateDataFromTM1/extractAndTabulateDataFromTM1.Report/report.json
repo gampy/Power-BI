@@ -1,0 +1,63 @@
+{
+  "config": "{\"version\":\"5.51\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU02\",\"version\":\"5.51\",\"type\":2}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"slowDataSourceSettings\":{\"isCrossHighlightingDisabled\":false,\"isSlicerSelectionsButtonEnabled\":false,\"isFilterSelectionsButtonEnabled\":false,\"isFieldWellButtonEnabled\":false,\"isApplyAllButtonEnabled\":false},\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY24SU02",
+            "path": "BaseThemes/CY24SU02.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Log",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection",
+      "ordinal": 1,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"880ab169a0e7da81bdbf\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":0,\"z\":0,\"width\":1280,\"height\":720,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"SysHttpRequestLog.Name\"},{\"queryRef\":\"SysHttpRequestLog.Group\"},{\"queryRef\":\"Sum(SysHttpRequestLog.RequstNo)\"},{\"queryRef\":\"SysHttpRequestLog.RequestContent\"},{\"queryRef\":\"SysHttpRequestLog.RequestBody\"},{\"queryRef\":\"Sum(SysHttpRequestLog.AttemptNo)\"},{\"queryRef\":\"Sum(SysHttpRequestLog.RequestDelay)\"},{\"queryRef\":\"SysHttpRequestLog.ConnectionErrorReason\"},{\"queryRef\":\"SysHttpRequestLog.ConnectionErrorMessage\"},{\"queryRef\":\"SysHttpRequestLog.ConnectionErrorDetails\"},{\"queryRef\":\"Sum(SysHttpRequestLog.HttpResponseStatus)\"},{\"queryRef\":\"SysHttpRequestLog.ResponseErrorCode\"},{\"queryRef\":\"SysHttpRequestLog.ResponseErrorMessage\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SysHttpRequestLog\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"AttemptNo\"},\"Name\":\"Sum(SysHttpRequestLog.AttemptNo)\",\"NativeReferenceName\":\"AttemptNo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Group\"},\"Name\":\"SysHttpRequestLog.Group\",\"NativeReferenceName\":\"Group\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"HttpResponseStatus\"},\"Name\":\"Sum(SysHttpRequestLog.HttpResponseStatus)\",\"NativeReferenceName\":\"HttpResponseStatus\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Name\"},\"Name\":\"SysHttpRequestLog.Name\",\"NativeReferenceName\":\"Name\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequestBody\"},\"Name\":\"SysHttpRequestLog.RequestBody\",\"NativeReferenceName\":\"RequestBody\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequestContent\"},\"Name\":\"SysHttpRequestLog.RequestContent\",\"NativeReferenceName\":\"RequestContent\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequstNo\"},\"Name\":\"Sum(SysHttpRequestLog.RequstNo)\",\"NativeReferenceName\":\"RequstNo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequestDelay\"},\"Name\":\"Sum(SysHttpRequestLog.RequestDelay)\",\"NativeReferenceName\":\"RequestDelay\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ConnectionErrorDetails\"},\"Name\":\"SysHttpRequestLog.ConnectionErrorDetails\",\"NativeReferenceName\":\"ConnectionErrorDetails\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ConnectionErrorMessage\"},\"Name\":\"SysHttpRequestLog.ConnectionErrorMessage\",\"NativeReferenceName\":\"ConnectionErrorMessage\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ConnectionErrorReason\"},\"Name\":\"SysHttpRequestLog.ConnectionErrorReason\",\"NativeReferenceName\":\"ConnectionErrorReason\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ResponseErrorCode\"},\"Name\":\"SysHttpRequestLog.ResponseErrorCode\",\"NativeReferenceName\":\"ResponseErrorCode\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"ResponseErrorMessage\"},\"Name\":\"SysHttpRequestLog.ResponseErrorMessage\",\"NativeReferenceName\":\"ResponseErrorMessage\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RequstNo\"}}}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"grid\":[{\"properties\":{\"gridHorizontalWeight\":{\"expr\":{\"Literal\":{\"Value\":\"0D\"}}},\"outlineWeight\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}},\"outlineColor\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":1,\"Percent\":0}}}}}}}],\"values\":[{\"properties\":{\"fontFamily\":{\"expr\":{\"Literal\":{\"Value\":\"'Tahoma'\"}}},\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"8D\"}}},\"wordWrap\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}],\"columnHeaders\":[{\"properties\":{\"fontFamily\":{\"expr\":{\"Literal\":{\"Value\":\"'Tahoma'\"}}},\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"8D\"}}},\"bold\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"wordWrap\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"total\":[{\"properties\":{\"totals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"columnWidth\":[{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"74.18093981834531D\"}}}},\"selector\":{\"metadata\":\"Sum(SysHttpRequestLog.AttemptNo)\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"126.96916284707314D\"}}}},\"selector\":{\"metadata\":\"Sum(SysHttpRequestLog.HttpResponseStatus)\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"238.79104191391912D\"}}}},\"selector\":{\"metadata\":\"SysHttpRequestLog.RequestContent\"}}]}}}",
+          "filters": "[]",
+          "height": 720.00,
+          "width": 1280.00,
+          "x": 0.00,
+          "y": 0.00,
+          "z": 0.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "MDX 1",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection15934b607891571647b7",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"1b73a6a1ce5611b2232a\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":0,\"z\":0,\"width\":640,\"height\":720,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"MDX 1 Mode 0.Versions\"},{\"queryRef\":\"MDX 1 Mode 0.Months\"},{\"queryRef\":\"MDX 1 Mode 0.Channels\"},{\"queryRef\":\"MDX 1 Mode 0.Products\"},{\"queryRef\":\"MDX 1 Mode 0.Sales Plan Measures\"},{\"queryRef\":\"MDX 1 Mode 0.Subsidiaries\"},{\"queryRef\":\"MDX 1 Mode 0.Value\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"m\",\"Entity\":\"MDX 1 Mode 0\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Channels\"},\"Name\":\"MDX 1 Mode 0.Channels\",\"NativeReferenceName\":\"Channels\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Months\"},\"Name\":\"MDX 1 Mode 0.Months\",\"NativeReferenceName\":\"Months\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Products\"},\"Name\":\"MDX 1 Mode 0.Products\",\"NativeReferenceName\":\"Products\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Sales Plan Measures\"},\"Name\":\"MDX 1 Mode 0.Sales Plan Measures\",\"NativeReferenceName\":\"Sales Plan Measures\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Subsidiaries\"},\"Name\":\"MDX 1 Mode 0.Subsidiaries\",\"NativeReferenceName\":\"Subsidiaries\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Value\"},\"Name\":\"MDX 1 Mode 0.Value\",\"NativeReferenceName\":\"Value\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Versions\"},\"Name\":\"MDX 1 Mode 0.Versions\",\"NativeReferenceName\":\"Versions\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Products\"}}}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"grid\":[{\"properties\":{\"gridHorizontalWeight\":{\"expr\":{\"Literal\":{\"Value\":\"0D\"}}},\"outlineWeight\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}},\"outlineColor\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":1,\"Percent\":0}}}}}}}],\"values\":[{\"properties\":{\"fontFamily\":{\"expr\":{\"Literal\":{\"Value\":\"'Tahoma'\"}}},\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"8D\"}}},\"wordWrap\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}],\"columnHeaders\":[{\"properties\":{\"fontFamily\":{\"expr\":{\"Literal\":{\"Value\":\"'Tahoma'\"}}},\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"8D\"}}},\"bold\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"wordWrap\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"total\":[{\"properties\":{\"totals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"columnWidth\":[{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"122.67056064116396D\"}}}},\"selector\":{\"metadata\":\"MDX 1 Mode 0.Sales Plan Measures\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"137.6865671641791D\"}}}},\"selector\":{\"metadata\":\"MDX 1 Mode 0.Subsidiaries\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"74.16417481850584D\"}}}},\"selector\":{\"metadata\":\"MDX 1 Mode 0.Value\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"62.5820880036093D\"}}}},\"selector\":{\"metadata\":\"MDX 1 Mode 0.Products\"}}]}}}",
+          "filters": "[]",
+          "height": 720.00,
+          "width": 640.00,
+          "x": 0.00,
+          "y": 0.00,
+          "z": 0.00
+        }
+      ],
+      "width": 1280.00
+    }
+  ]
+}
