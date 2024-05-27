@@ -1,1 +1,5 @@
-	<img src="exploredata.pro/wp-content/uploads/2024/05/Microsoft-Power-BI-Logo-140x100.png" style="width: 100%; height: 100%;text-align: left"/><h2 style="text-align: center;">Power Query Tools</h2>
+<img src="https://exploredata.pro/wp-content/uploads/2024/05/Microsoft-Power-BI-Logo.png" style="width: 10%; height: 10%; text-align: left"/>
+
+## Power Query Tools
+> Extending the Wait-Retry Pattern in Power Query </br>
+> Connecting Power BI to IBM Planning Analytics  </br>
