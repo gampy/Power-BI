@@ -22,7 +22,7 @@ expression fn_sendHttpRequest = ```
 		                                    
 		                // Request URL, headers, options
 		                // Avoiding a dynamic data source when updating on the Service
-		                Request = #"HTTP(S)://HOST:PORT" & "/api/v1/",
+		                Request = #"HTTP(S)://HOST:PORT" & PATH,
 		                Options = [
 		                        Headers = [
 		                                    #"Authorization" = AuthType & " " & Auth, 
@@ -113,7 +113,7 @@ expression fn_sendHttpRequest = ```
 		    Documentation.LongDescription = " Managing HTTP requests",
 		    Documentation.Category = " Data extraction ",
 		    Documentation.Source = " ",
-		    Documentation.Version = " 1.81.bc ",
+		    Documentation.Version = " 1.82.bc ",
 		    Documentation.Author = " Alex Zaitsev ",
 		    Documentation.Examples = {[Description =  "",
 		    Code = " fn_sendHttpRequest( ""Users"", null, 1 ) ",
@@ -259,4 +259,13 @@ expression query3 =
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Record
+
+/// Optional. Path part of the URL identifying the specific API being called
+expression PATH = "/api/v1/" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+	lineageTag: 92cb20d0-ab0c-4f0d-9660-8e8f0adbb24f
+	queryGroup: Params
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
 
