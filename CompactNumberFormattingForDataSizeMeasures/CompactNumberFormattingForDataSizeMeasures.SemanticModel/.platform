@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "CompactNumberFormattingForDataSizeMeasures"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "54b8fb85-8c81-49e9-a359-0a35fe02873b"
+  }
+}

@@ -1,0 +1,3 @@
+## Compact number formatting for data size measures
+
+Creating dynamic measures that display values in bytes (b), kilobytes (Kb), megabytes (Mb), gigabytes (Gb)...

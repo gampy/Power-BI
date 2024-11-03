@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "CompactNumberFormattingForDataSizeMeasures"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "68ef2b52-af5d-4c25-85a5-e07e12b5ab31"
+  }
+}

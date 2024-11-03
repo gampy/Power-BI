@@ -1,0 +1,130 @@
+table 'OLAP cubes'
+	lineageTag: 631cde95-9e4b-4e9d-b714-e3b3fb43fb3b
+
+	measure 'Total cells (numeric formatting)' = ```
+			SELECTEDVALUE('OLAP cubes'[Total cells ( basic formatting)]) 
+			```
+		lineageTag: 4f57ad6e-87df-46cd-b42a-37dd425f3871
+
+		formatStringDefinition =
+				VAR _base = 1000
+				VAR _value = IF (SELECTEDMEASURE() > 0, SELECTEDMEASURE(), 1)
+				VAR _ordinal = TRUNC(LOG(_value, _base))
+				VAR _format = LOOKUPVALUE(Units[Decimal formatting], Units[Ordinal], _ordinal)
+				RETURN
+				    _format
+
+	measure 'Size (numeric formatting)' = SELECTEDVALUE('OLAP cubes'[Size, bytes ( basic formatting)] )
+		lineageTag: 46c11ce7-e641-4399-8ea6-4e9e66d4cfe2
+
+		formatStringDefinition = ```
+				VAR _base = 1024
+				VAR _value = IF (SELECTEDMEASURE() > 0, SELECTEDMEASURE(), 1)
+				VAR _ordinal = TRUNC(LOG(_value, _base))
+				
+				VAR _denominator = LOOKUPVALUE(Units[Size denominator], Units[Ordinal], _ordinal)
+				VAR _rounding = LOOKUPVALUE(Units[Size rounding], Units[Ordinal], _ordinal)
+				VAR _unit = LOOKUPVALUE(Units[Size unit], Units[Ordinal], _ordinal)
+				
+				VAR _format = """" & ROUND((SELECTEDMEASURE() / _denominator), _rounding) & """" & _unit
+				RETURN
+				    _format
+				
+				```
+
+	measure 'xTst mult' = ```
+			
+			VAR _base = 1000
+			VAR _value = IF ([Size (numeric formatting)] > 0, [Size (numeric formatting)], 1)
+			VAR _ordinal = TRUNC(LOG(_value, _base))
+			VAR _format = LOOKUPVALUE(Units[Decimal formatting], Units[Ordinal], _ordinal)
+			RETURN
+			    _format
+			
+			```
+		lineageTag: d7710eda-8ded-4d87-b6f4-3e2f15084e7a
+
+	measure 'Size (string formatting)' = ```
+			
+			    VAR _value = SELECTEDVALUE('OLAP cubes'[Size, bytes ( basic formatting)]) 
+			RETURN 
+			    SWITCH (
+			        TRUE (),
+			        _value <= 1024, FORMAT(_value, "#0 b"),
+			        _value <= 1024^2, FORMAT(_value / 1024, "#0 Kb"),
+			        _value <= 1024^3, FORMAT(_value / 1024^2, "#0 Mb"),
+			        _value <= 1024^4, FORMAT(_value / 1024^3, "#0.0 Gb"),
+			        FORMAT(_value / 1024^4, "#0.00 Tb")
+			    )
+			```
+		lineageTag: cb44a3d5-1af0-49a2-9aff-90ef6fc3afc1
+
+	measure 'Total cells (string formatting)' = ```
+			
+			    VAR _value = SELECTEDVALUE('OLAP cubes'[Total cells ( basic formatting)]) 
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        _value <= 1E3, FORMAT(_value, "#0"),
+			        _value <= 1E6, FORMAT(_value, "#0,.0 K"),
+			        _value <= 1E9, FORMAT(_value, "#0,,.0 M"),
+			        _value <= 1E12, FORMAT(_value, "#0,,,.0 B"),
+			        FORMAT(_value, "#0,,,.0 T")
+			    )
+			```
+		lineageTag: 1ef9533f-b316-4c75-a030-1d24738e9b60
+
+	measure xTst = 313099
+		lineageTag: 778ec79d-7c23-4d2c-86e8-3656cb063192
+
+		formatStringDefinition = """" & ROUND(SELECTEDMEASURE() / 1024, 2)  & """" & " Gb"
+
+	column Name
+		dataType: string
+		lineageTag: 3d8bcb43-7e4b-4856-849f-2c2d067a0ddb
+		summarizeBy: none
+		isDataTypeInferred
+		sourceColumn: [Value1]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total cells ( basic formatting)'
+		dataType: double
+		formatString: #,0
+		lineageTag: dccae00b-d7e6-4fde-bc78-7d149803b250
+		summarizeBy: sum
+		isDataTypeInferred
+		sourceColumn: [Value2]
+
+		annotation SummarizationSetBy = User
+
+	column 'Size, bytes ( basic formatting)'
+		dataType: double
+		formatString: #,0
+		lineageTag: f6b8e172-1b26-4788-9209-7becdd8f2f5f
+		summarizeBy: sum
+		isDataTypeInferred
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'OLAP cubes' = calculated
+		mode: import
+		source = ```
+				
+				    {
+				        ("Sales by Category", ROUND(RAND()*100000, 0), ROUND(RAND()*100000000, 0)), 
+				        ("Sales by Product", ROUND(RAND()*1000000000, 0), ROUND(RAND()*100000000000, 0)), 
+				        ("Sales by SKU", ROUND(RAND()*10000000000, 0), ROUND(RAND()*1000000000000, 0)), 
+				        ("Price list", ROUND(RAND()*500, 0), ROUND(RAND()*500, 0)), 
+				        ("Currency rates", ROUND(RAND()*500, 0), ROUND(RAND()*500, 0)), 
+				        ("Balance", ROUND(RAND()*10000, 0),  ROUND(RAND()*1000000, 0)), 
+				        ("PL", ROUND(RAND()*100000, 0), ROUND(RAND()*10000000, 0)), 
+				        ("Direct costs", ROUND(RAND()*5000000, 0), ROUND(RAND()*5000000, 0)), 
+				        ("Indirect costs", ROUND(RAND()*50000, 0), ROUND(RAND()*500000, 0)), 
+				        ("CF", ROUND(RAND()*10000, 0), ROUND(RAND()*1000000, 0))
+				    }
+				```
+
+	annotation PBI_Id = 24819aa5d9db4058b77a2f7e2c07f96e
+

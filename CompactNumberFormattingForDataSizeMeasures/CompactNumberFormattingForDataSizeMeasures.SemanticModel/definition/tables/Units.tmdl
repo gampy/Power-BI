@@ -1,0 +1,67 @@
+table Units
+	lineageTag: ea078dea-08d7-4312-a935-bf28d8dc35c9
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 4a8a517c-2c99-49cf-97cb-9e925a3ff1f1
+		summarizeBy: sum
+		isDataTypeInferred
+		sourceColumn: [Value1]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Decimal formatting'
+		dataType: string
+		lineageTag: be4ed2e0-787b-47ae-8cd1-1cd01143c448
+		summarizeBy: none
+		isDataTypeInferred
+		sourceColumn: [Value2]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Size denominator'
+		dataType: double
+		formatString: 0
+		lineageTag: 2655b1d1-9b56-4230-983f-c3523e26df51
+		summarizeBy: sum
+		isDataTypeInferred
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Size rounding'
+		dataType: int64
+		lineageTag: bfde3dbc-1ed8-4405-a7a4-25f76e9dbaa6
+		summarizeBy: sum
+		isDataTypeInferred
+		sourceColumn: [Value4]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Size unit'
+		dataType: string
+		lineageTag: 71dae576-9c47-4e19-840b-c75234f44380
+		summarizeBy: none
+		isDataTypeInferred
+		sourceColumn: [Value5]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Units = calculated
+		mode: import
+		source = ```
+				
+				    {
+				        (0, "#0", 1, 0, " b"),
+				        (1, "#0,.0 K", 1024^1, 0, " Kb"),
+				        (2, "#0,,.0 M", 1024^2, 0, " Mb"),
+				        (3, "#0,,,.0 B", 1024^3, 1, " Gb"),
+				        (4, "#0,,,,.0 T", 1024^4, 2," Tb")
+				    }
+				```
+
+	annotation PBI_Id = 0b6569edebb345249c745bb834e203cb
+

@@ -1,0 +1,57 @@
+{
+  "config": "{\"version\":\"5.55\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU06\",\"version\":\"5.55\",\"type\":2},\"customTheme\":{\"name\":\"AccessibleTidal\",\"version\":\"5.55\",\"type\":2}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"slowDataSourceSettings\":{\"isCrossHighlightingDisabled\":false,\"isSlicerSelectionsButtonEnabled\":false,\"isFilterSelectionsButtonEnabled\":false,\"isFieldWellButtonEnabled\":false,\"isApplyAllButtonEnabled\":false},\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "AccessibleTidal",
+            "path": "BuiltInThemes/AccessibleTidal.json",
+            "type": 201
+          },
+          {
+            "name": "CY24SU06",
+            "path": "BaseThemes/CY24SU06.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Page 1",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "32807a51330d1c015cc0",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"571c107675c6b3356460\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":352,\"z\":1000,\"width\":1280,\"height\":335.99999999999994,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"OLAP cubes.Name\"},{\"queryRef\":\"Sum(OLAP cubes.Size, bytes ( basic formatting))\"},{\"queryRef\":\"OLAP cubes.Size (string formatting)\"},{\"queryRef\":\"OLAP cubes.Size (dynamic units)\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"o\",\"Entity\":\"OLAP cubes\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Name\"},\"Name\":\"OLAP cubes.Name\",\"NativeReferenceName\":\"Name\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Size (numeric formatting)\"},\"Name\":\"OLAP cubes.Size (dynamic units)\",\"NativeReferenceName\":\"Size (numeric formatting)\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Size, bytes ( basic formatting)\"},\"Name\":\"Sum(OLAP cubes.Size, bytes ( basic formatting))\",\"NativeReferenceName\":\"Size, bytes ( basic formatting)\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Size (string formatting)\"},\"Name\":\"OLAP cubes.Size (string formatting)\",\"NativeReferenceName\":\"Size (string formatting)\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"columnWidth\":[{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"155.79429925718415D\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Name\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"284.5907684230256D\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Size (dynamic units)\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"249.01648129090876D\"}}}},\"selector\":{\"metadata\":\"Sum(OLAP cubes.Size, bytes ( basic formatting))\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"210.90780089293276D\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Size (string formatting)\"}}],\"grid\":[{\"properties\":{\"gridHorizontal\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}},\"gridVertical\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}},\"outlineColor\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":1,\"Percent\":0}}}}},\"outlineStyle\":{\"expr\":{\"Literal\":{\"Value\":\"0D\"}}},\"outlineWeight\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}}}}],\"columnHeaders\":[{\"properties\":{\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"11D\"}}},\"bold\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"alignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Center'\"}}}}}],\"values\":[{\"properties\":{\"outlineStyle\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}}}}],\"total\":[{\"properties\":{\"outlineStyle\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}},\"totals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"columnFormatting\":[{\"properties\":{\"alignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Left'\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Name\"}},{\"properties\":{\"alignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Right'\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Size (string formatting)\"}},{\"properties\":{},\"selector\":{\"metadata\":\"OLAP cubes.Size (dynamic units)\"}}]},\"vcObjects\":{\"stylePreset\":[{\"properties\":{\"name\":{\"expr\":{\"Literal\":{\"Value\":\"'Minimal'\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 336.00,
+          "width": 1280.00,
+          "x": 0.00,
+          "y": 352.00,
+          "z": 1000.00
+        },
+        {
+          "config": "{\"name\":\"9e446b6e830036610d91\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":16,\"z\":0,\"width\":1280,\"height\":336,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"OLAP cubes.Name\"},{\"queryRef\":\"Sum(OLAP cubes.Number of cells)\"},{\"queryRef\":\"OLAP cubes.Total cells (standard units)\"},{\"queryRef\":\"OLAP cubes.Number of cells1\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"o\",\"Entity\":\"OLAP cubes\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Name\"},\"Name\":\"OLAP cubes.Name\",\"NativeReferenceName\":\"Name\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Total cells ( basic formatting)\"},\"Name\":\"Sum(OLAP cubes.Number of cells)\",\"NativeReferenceName\":\"Total cells ( basic formatting)\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Total cells (numeric formatting)\"},\"Name\":\"OLAP cubes.Number of cells1\",\"NativeReferenceName\":\"Total cells (numeric formatting)\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Total cells (string formatting)\"},\"Name\":\"OLAP cubes.Total cells (standard units)\",\"NativeReferenceName\":\"Total cells (string formatting)\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Total cells ( basic formatting)\"}}}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"columnWidth\":[{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"155.79429925718415D\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Name\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"246.60670470961605D\"}}}},\"selector\":{\"metadata\":\"Sum(OLAP cubes.Number of cells)\"}},{\"properties\":{\"value\":{\"expr\":{\"Literal\":{\"Value\":\"281.4174635295842D\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Number of cells1\"}}],\"grid\":[{\"properties\":{\"gridHorizontal\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}},\"gridVertical\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}},\"outlineColor\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":1,\"Percent\":0}}}}},\"outlineStyle\":{\"expr\":{\"Literal\":{\"Value\":\"0D\"}}},\"outlineWeight\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}}}}],\"columnHeaders\":[{\"properties\":{\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"11D\"}}},\"bold\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"alignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Center'\"}}}}}],\"values\":[{\"properties\":{\"outlineStyle\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}}}}],\"total\":[{\"properties\":{\"outlineStyle\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}},\"totals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"columnFormatting\":[{\"properties\":{\"styleValues\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"alignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Right'\"}}}},\"selector\":{\"metadata\":\"OLAP cubes.Total cells (standard units)\"}}]},\"vcObjects\":{\"stylePreset\":[{\"properties\":{\"name\":{\"expr\":{\"Literal\":{\"Value\":\"'Minimal'\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 336.00,
+          "width": 1280.00,
+          "x": 0.00,
+          "y": 16.00,
+          "z": 0.00
+        }
+      ],
+      "width": 1280.00
+    }
+  ],
+  "theme": "AccessibleTidal"
+}
