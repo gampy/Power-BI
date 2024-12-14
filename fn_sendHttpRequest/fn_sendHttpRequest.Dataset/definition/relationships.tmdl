@@ -1,5 +1,0 @@
-relationship ff5b1c50-d990-4af9-ae4f-7e2140c4e04d
-	joinOnDateBehavior: datePartOnly
-	fromColumn: SysHttpRequestLog.RequestResponseTime
-	toColumn: LocalDateTable_5d7457ce-f585-4cd5-827b-93066873f365.Date
-
