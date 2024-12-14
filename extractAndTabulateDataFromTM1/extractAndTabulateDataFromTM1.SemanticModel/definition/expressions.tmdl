@@ -1,0 +1,439 @@
+expression fn_sendHttpRequest = ```
+		let func = (RequestContent as text, optional RawBody as text, optional RequstNo as nullable number) =>  
+		    let 
+		        //fn_checkRequestError Start
+		        fn_checkRequestError = (Response as nullable any, ServerResponse as nullable any) as record =>
+		            if Response[HasError]?
+		                then [HasError = Response[HasError]?, ErrorReason = Response[Error]?[Reason]?, ErrorMessage = Response[Error]?[Message]?, ErrorDetails = Response[Error]?[Details]?]
+		                else 
+		                    if ServerResponse[HasError]? 
+		                        then [ HasError = ServerResponse[HasError]?, ErrorReason = ServerResponse[Error]?[Reason]?, ErrorMessage = ServerResponse[Error]?[Message]?, ErrorDetails = ServerResponse[Error]?[Details]? ]
+		                        else if not ServerResponse[HasError] and ServerResponse[Value] = null
+		                        then [ HasError = true, ErrorReason = "Unknown", ErrorMessage = "Incorrect connection or authorization parameters may have been specified", ErrorDetails = null ]
+		                        else [ HasError = false, ErrorReason = null, ErrorMessage = null, ErrorDetails = null ],
+		        //fn_checkRequestError End
+		
+		        //fn_trySendReques Start
+		        fn_trySendRequest = (AttemptNo as number, ResponseMetaData as table) =>
+		            let
+		                // Request parameteres
+		                NumberInPool = if (RequstNo = null) then 1 else RequstNo,  
+		                RequestDelay =  (Number.IntegerDivide(NumberInPool - 1, HttpRequestPool) + 1) * HttpRequestLatencySec * Number.Power(2, (AttemptNo - 1)) - HttpRequestLatencySec, // throttling
+		                                    
+		                // Request URL, headers, options
+		                // Avoiding a dynamic data source when updating on the Service
+		                Request = #"HTTP(S)://HOST:PORT" & "/api/v1/",
+		                Options = [
+		                        Headers = [
+		                                    #"Authorization" = AuthType & " " & Auth, 
+		                                    #"Content-Type" = "application/json;charset=utf-8",
+		                                    #"Cache-Control" = "no-cache, must-revalidate"
+		                        ],
+		                        RelativePath = RequestContent,
+		                        Content = Text.ToBinary(RawBody),
+		                        Timeout = #duration(0, 0, 0, HttpRequestTimeoutSec),
+		                        IsRetry = true,
+		                        ManualStatusHandling = 
+		                            {
+		                                200, 201, 202,                  // Success, record the request result  
+		                                408, 429, 503, 504, 509,        // Handled error, repeat the request, if failure again - record the request result
+		                                401, 403, 404                   // Handled error, record the request result  
+		                            }
+		                ], 
+		
+		                //Send Request & BufferData
+		                SendRequest = Function.InvokeAfter( () => try Web.Contents(Request, Options), #duration(0, 0, 0, RequestDelay) ),
+		
+		                BufferedData = SendRequest[[HasError]] & [Value = Binary.Buffer(SendRequest[Value])],  //avoid a risk of multple PQ calls     
+		                ResponseStatus = try Value.Metadata(SendRequest[Value]?)[Response.Status]?,
+		
+		                Error = fn_checkRequestError(BufferedData, ResponseStatus),
+		                HttpResponseStatus = if ResponseStatus[HasError]? then null else ResponseStatus[Value], 
+		                RequestResponseTime = if HttpResponseStatus <> null then DateTime.LocalNow() else null, // avoid lazy evaluation
+		                AppendResponseMetaData = Table.InsertRows(    ResponseMetaData
+		                                                            , Table.RowCount(ResponseMetaData)
+		                                                            , {[  RequstNo = RequstNo
+		                                                                , RequestContent = RequestContent
+		                                                                , RequestBody = RawBody
+		                                                                , AttemptNo = AttemptNo
+		                                                                , RequestDelay = RequestDelay
+		                                                                , RequestResponseTime = RequestResponseTime
+		                                                                , HasConnectionError = Error[HasError]
+		                                                                , ConnectionErrorReason = Error[ErrorReason]
+		                                                                , ConnectionErrorMessage = Error[ErrorMessage]
+		                                                                , ConnectionErrorDetails = Error[ErrorDetails]
+		                                                                , HttpResponseStatus = HttpResponseStatus
+		                                                            ]}
+		                                                        ), 
+		                RequestResult = if (Error[HasError]) 
+		                then 
+		                    Record.AddField([], "@metadata", AppendResponseMetaData)
+		                else
+		                    let                                
+		                        HttpRequestResult = if (List.MatchesAny({408, 429, 503, 504, 509}, each _ = HttpResponseStatus) and AttemptNo < HttpRequestMaxAttempts)
+		                                        then
+		                                            @fn_trySendRequest(AttemptNo + 1, AppendResponseMetaData)                                                       // Repeat the request
+		                                        else 
+		                                            Record.AddField(try Json.Document(BufferedData[Value]) otherwise [], "@metadata", AppendResponseMetaData)       // Add @metadata field to the request result
+		                    in
+		                        HttpRequestResult
+		                in
+		                   RequestResult, 
+		        //fn_trySendReques End
+		        
+		        AuthType = if ( NAMESPACE = null or NAMESPACE = "" ) then "Basic" else "CAMNamespace",
+		        Auth = Binary.ToText(
+		                    Text.ToBinary(LOGIN & 
+		                    ":" & PASSWORD & 
+		                    ( if (NAMESPACE = null or NAMESPACE = "" ) then "" else ":" & NAMESPACE )
+		                )               
+		                , BinaryEncoding.Base64), 
+		        
+		        HttpRequestPool = SettingsConfigDefault[HttpRequestPool], 
+		        HttpRequestLatencySec = SettingsConfigDefault[HttpRequestLatencySec],
+		        HttpRequestMaxAttempts = SettingsConfigDefault[HttpRequestMaxAttempts],
+		        HttpRequestTimeoutSec = SettingsConfigDefault[HttpRequestTimeoutSec],
+		        ResponseTable = fn_trySendRequest(1, #table(type table[
+		                                                                  RequstNo = number
+		                                                                , RequestContent = text
+		                                                                , RequestBody = text
+		                                                                , AttemptNo = number
+		                                                                , RequestDelay = number
+		                                                                , RequestResponseTime = datetime                                                                
+		                                                                , HasConnectionError = logical
+		                                                                , ConnectionErrorReason = text
+		                                                                , ConnectionErrorMessage = text
+		                                                                , ConnectionErrorDetails = text
+		                                                                , HttpResponseStatus = number
+		                                                            ], {}) )
+		    in
+		        ResponseTable,
+		
+		    documentation = [
+		    Documentation.Name =  " fn_sendHttpRequest",
+		    Documentation.Description = " ",
+		    Documentation.LongDescription = " Managing HTTP requests",
+		    Documentation.Category = " Data extraction ",
+		    Documentation.Source = " ",
+		    Documentation.Version = " 1.81.pa ",
+		    Documentation.Author = " Copyright © Alex Zaitsev ",
+		    Documentation.Examples = {[Description =  "",
+		    Code = " fn_sendHttpRequest( ""Users"", null, 1 ) ",
+		    Result = "A record in the format [ @odata.context as text, value as List, @metadata as Table ]"]}
+		    ]
+		in
+		    Value.ReplaceType(func, Value.ReplaceMetadata(Value.Type(func), documentation))
+		```
+	lineageTag: 1e0c6747-aedf-4b46-98a5-63b531fedb60
+	queryGroup: Functions
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+/// Mandatory.The address of the http(s) connection to the server. Use "http(s)://HttpHost:HttpPort" pattern.
+expression HTTP(S)://HOST:PORT = "https://localhost:8886" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 55dbe6ad-607e-4709-88ce-9d0dba4884ba
+	queryGroup: Params
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation
+
+/// Mandatory.
+expression LOGIN = "admin" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: aaf9e799-8b9c-410b-b42e-b5e39b8ffb52
+	queryGroup: Params
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation
+
+/// Optional.
+/// The password entered is not hidden behind asterisks!
+expression PASSWORD = "apple" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 4a8abf84-b607-4f7f-a8e1-37fbea6a969f
+	queryGroup: Params
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression SysHttpRequestData =
+		let
+		    Source = #table(type table[Name = text, Group = text, Data = any],
+		        {
+		            { "query MDX 1 Mode 0", "Basic",    #"query MDX 1 Mode 0"   },
+		            { "query MDX 1 Mode 1", "Basic",    #"query MDX 1 Mode 1"   },
+		            { "query View 1 Mode 0", "Basic",    #"query View 1 Mode 0"  }
+		        }
+		    )
+		in
+		    Source
+	lineageTag: dd20d5e3-ba1d-4b2c-ae38-576ac0b4a2e3
+	queryGroup: Logging
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression SettingsConfigDefault = ```
+		let
+		    Result =
+						[                       
+							  HttpRequestPool = 2 
+							, HttpRequestLatencySec = 5
+					//		, HttpRequestRecurringLatencySec = 5
+							, HttpRequestMaxAttempts = 3
+							, HttpRequestTimeoutSec = 300
+						]
+		in
+		    Result
+		```
+	lineageTag: 616d824d-67ad-4ecc-90ee-67052e03c876
+	queryGroup: Configuration
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+
+expression 'query MDX 1 Mode 0' = ```
+		let
+		    Source =  fn_requestMDX(   
+		            "Sales Plan"
+		            , [
+		                #"Months" = {},
+		                #"Versions" = {"Budget Version 1"},
+		                #"Channels" = {"Sports Store"},
+		                #"Subsidiaries" = {},
+		                #"Products" = {},
+		                #"Sales Plan Measures" = {"Quantity", "Unit cost", "COST OF SALES"}
+		            ]
+		            , true
+		            , 1
+		            , 0
+		    )
+		in
+		    Source
+		```
+	lineageTag: 3b815e60-138d-4315-bf44-854d36ef89d4
+	queryGroup: HttpRequests
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+
+expression 'query MDX 1 Mode 1' = ```
+		let
+		    Source =  fn_requestMDX(   
+		            "Sales Plan"
+		            , [
+		                #"Months" = {},
+		                #"Versions" = {"Budget Version 1"},
+		                #"Channels" = {"Sports Store"},
+		                #"Subsidiaries" = {},
+		                #"Products" = {},
+		                #"Sales Plan Measures" = {"Quantity", "Unit cost", "COST OF SALES"}
+		            ]
+		            , true
+		            , 2
+		            , 1
+		    )
+		in
+		    Source
+		```
+	lineageTag: 05e80135-409c-44f1-b06a-6e76e653c6cd
+	queryGroup: HttpRequests
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+
+expression fn_requestMDX = ```
+		let func = (Cube as text, Dims as record, optional SuppressZeros as nullable logical, optional RequstNo as nullable number, optional mode as nullable number) =>  
+		        let
+		            MDX1 = "{ ""MDX"":""SELECT ",
+		            MDX2 = if (SuppressZeros = null or SuppressZeros = true) then "NON EMPTY " else "",
+		            MDX3 = 
+		                        let
+		                        DimsToTable = Record.ToTable(Dims),
+		                        DimHiers = Table.FromList(DimsToTable[Name], Splitter.SplitTextByDelimiter(":", QuoteStyle.Csv),  { "Dimension", "Hierarchy" } ),
+		                        ComposeDimHierValues = Table.FromColumns({ DimHiers[Dimension], DimHiers[Hierarchy], DimsToTable[Value] }, { "Dimension", "Hierarchy", "Value" }),
+		                        CreateMembers = Table.FromRecords
+		                                            (Table.TransformRows(ComposeDimHierValues
+		                                                , ( row ) => Record.TransformFields(row, { "Value", each 
+		                                                if List.IsEmpty( _ ) 
+		                                                then { "[" & row[Dimension] & "].[" & ( if row[Hierarchy] = null then row[Dimension] else row[Hierarchy] ) & "].MEMBERS" } 
+		                                                else List.Transform( _ , each "[" & row[Dimension]  & "].[" & ( if row[Hierarchy] = null then row[Dimension] else row[Hierarchy] ) & "].[" & _ & "]" )
+		                                                })
+		                                            )),
+		                            CreateAxes = Table.TransformColumns(CreateMembers, { "Value", ( value ) => "{" & Text.Combine(value, ",") & "}" }),
+		                            CombineAxes = Text.Combine(CreateAxes[Value], " * ")
+		                        in
+		                            CombineAxes,
+		            MDX4 = " ON AXIS(0) FROM [" & Cube & "]"" }",
+		            MDX = MDX1 & MDX2 & MDX3 & MDX4,
+		    
+		            SendRequest = if (mode = null or mode = 0) 
+		            then
+		                fn_sendHttpRequest("ExecuteMDX?$expand=Cells($select=Ordinal,Value;$expand=Members)", MDX, RequstNo)  
+		            else
+		                fn_sendHttpRequest("ExecuteMDX?$expand=Axes($expand=Tuples($select=Ordinal;$expand=Members($select=Ordinal,Name,UniqueName))),Cells($select=Ordinal,Value)", MDX, RequstNo)
+		            in
+		                SendRequest,
+		    
+		    documentation = [
+		    Documentation.Name =  " fn_requestMDX",
+		    Documentation.Description = " ",
+		    Documentation.LongDescription = " Returns cube data for the specified MDX expression ",
+		    Documentation.Category = " HTTP Request ",
+		    Documentation.Source = " ",
+		    Documentation.Version = " 2.2 ",
+		    Documentation.Author = " Copyright © Alex Zaitsev ",
+		    Documentation.Examples = {[Description =  "",
+		    Code = " fn_requestMDX(""Cube1"", [Year = {""20X3"", ""20X4""}, Month = {}, Version = {""Plan""}, StockItems:Brands = {}, Measures = {""Qty"", ""Amount""}])",
+		    Result = "Raw ""Cube1"" data of the measures ""Qty"", ""Amount"" for the specified dimension elements of Dim1 and Dim3 and all elements of the hierarchy ""Hier"" in Dim2. Mode = 0 is the default mode, applicable for both Views and MDX queries. Mode = 1 provides faster data transformation in most cases, but it is only applicable for MDX queries"]}
+		    ]
+		in
+		    Value.ReplaceType(func, Value.ReplaceMetadata(Value.Type(func), documentation))
+		```
+	lineageTag: 6720a9ad-50d8-401e-b5ab-ae161736dcd1
+	queryGroup: Functions
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression fn_tabulateCubeData = ```
+		let func = (Cells as nullable list, optional Axes as nullable list, optional DimensionNames as nullable list) =>  
+		    let
+		        fn_pivotTuples = (TableToPivot as table) as table=>
+		            let
+		                TransformTable =  Table.TransformColumns(TableToPivot, 
+		                                    { "Tuples.Members", ( value ) => 
+		                                                let
+		                                                    CreateTableFromListOfRecords = try Table.FromRecords(value, {"Name", "UniqueName"}) otherwise Table.FromRows({}, {"Name", "UniqueName"}),
+		                                                    GetDimensionNames = Table.TransformColumns(CreateTableFromListOfRecords, 
+		                                                                        { "UniqueName", ( value ) => Text.BetweenDelimiters(value, "[", "].", {1, RelativePosition.FromStart}, {0, RelativePosition.FromStart}) }
+		                                                    ),
+		                                                    PivotTable = Table.Pivot(GetDimensionNames, List.Distinct(GetDimensionNames[UniqueName]), "UniqueName", "Name")
+		                                                in
+		                                                   PivotTable 
+		                                    }
+		                ),
+		            ColumnNames = if (DimensionNames = null or List.IsEmpty(DimensionNames))
+		                    then Table.ColumnNames(TransformTable[Tuples.Members]{0})
+		                    else DimensionNames,
+		            ExpandTargetTable = Table.ExpandTableColumn(TransformTable, "Tuples.Members", Table.ColumnNames(TransformTable[Tuples.Members]{0}), ColumnNames)
+		        in
+		            ExpandTargetTable,
+		
+		        //1. Cells
+		        CellsNullCheck = if Cells = null then {} else Cells,
+		        ConvertCellsToTable = Table.FromList(CellsNullCheck, Splitter.SplitByNothing(), {"CellsRecordSet"}, null, ExtraValues.Ignore),
+		        //ExpandCellsRecordSet = Table.ExpandRecordColumn(ConvertCellsToTable, "CellsRecordSet", {"Ordinal", "Value"}, {"Cells.Ordinal", "Cells.Value"}),
+		        ExpandCellsAndTuplesRecordSet = Table.ExpandRecordColumn(ConvertCellsToTable, "CellsRecordSet", {"Ordinal", "Members", "Value"}, {"Tuples.Ordinal", "Tuples.Members", "Value"}),
+		        
+		        GetTargetTable = if Axes = null 
+		        then 
+		            fn_pivotTuples(ExpandCellsAndTuplesRecordSet) 
+		        else 
+		            let
+		                //2. Axes members
+		                ConvertAxesToTable = Table.FromList(Axes, Splitter.SplitByNothing(), {"AxesRecordSet"}, null, ExtraValues.Ignore),
+		                ExpandAxesRecordSet = Table.ExpandRecordColumn(ConvertAxesToTable, "AxesRecordSet", {"Tuples"}),
+		                ExpandTuplesList = Table.ExpandListColumn(ExpandAxesRecordSet, "Tuples"),
+		                ExpandTuplesRecordSet = Table.ExpandRecordColumn(ExpandTuplesList, "Tuples", {"Ordinal", "Members"}, {"Tuples.Ordinal", "Tuples.Members"}),
+		                TuplesTargetTable =  fn_pivotTuples(ExpandTuplesRecordSet),
+		
+		                //3. Cells along the Members 
+		                CellsAlongMembers = Table.NestedJoin(
+		                                        TuplesTargetTable,
+		                                        "Tuples.Ordinal",   
+		                                        ExpandCellsAndTuplesRecordSet,
+		                                        "Tuples.Ordinal",
+		                                        "Cells",
+		                                        JoinKind.Inner
+		                ),
+		                ExpandCells = Table.ExpandTableColumn(CellsAlongMembers, "Cells", {"Value"})
+		            in
+		                ExpandCells
+		        in
+		            GetTargetTable,
+		    
+		    documentation = [
+		    Documentation.Name =  " fn_tabulateCubeData",
+		    Documentation.Description = " ",
+		    Documentation.LongDescription = " Converts the raw data returned by an MDX query into a tabular form (the value of the cell is placed next to the dimension elements).
+		                                    Ordinarily used with a dataset returned by the fn_requestCubeData() function. 
+		                                    If explicit dimension names in the function call are omitted the dimension names from the Axes parameter data will be extracted. 
+		                                    If the Axes list is empty the names must be specified explicitly in the third function parameter.",
+		    Documentation.Category = " Data processing ",
+		    Documentation.Source = " ",
+		    Documentation.Version = " 2.2 ",
+		    Documentation.Author = " Copyright © Alex Zaitsev ",
+		    Documentation.Examples = {[Description =  "",
+		    Code = " fn_tabulateCubeData( { Axes list }, { Cells list }, { Dim1, Dim2, Dim3 } ) ",
+		    Result = "A table in the format | Dim1 | Dim2 | Dim3 | Value |"]}
+		    ]
+		in
+		    Value.ReplaceType(func, Value.ReplaceMetadata(Value.Type(func), documentation))
+		```
+	lineageTag: ddc7598d-71b1-45c6-ab38-805db6f0d305
+	queryGroup: Functions
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression fn_requestView = ```
+		let func = (Cube as text, View as text, optional RequstNo as nullable number) =>  
+		                fn_sendHttpRequest("Cubes('"& Cube & "')/Views('" & View & "')/tm1.Execute?$expand=Cells($select=Ordinal,Value;$expand=Members)", "", RequstNo),
+		    documentation = [
+		    Documentation.Name =  " fn_requestView",
+		    Documentation.Description = " ",
+		    Documentation.LongDescription = " Returns cube data for the specified View ",
+		    Documentation.Category = " HTTP Request ",
+		    Documentation.Source = " ",
+		    Documentation.Version = " 1.0 ",
+		    Documentation.Author = " Copyright © Alex Zaitsev ",
+		    Documentation.Examples = {[Description =  "",
+		    Code = " fn_requestCubeData(""Cube1"", ""View1"") ",
+		    Result = "Raw ""Cube1/View1"" data"]}
+		    ]
+		in
+		    Value.ReplaceType(func, Value.ReplaceMetadata(Value.Type(func), documentation))
+		```
+	lineageTag: 1c7bfdd9-693e-46a6-8782-11e9c6b76723
+	queryGroup: Functions
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression 'query View 1 Mode 0' = ```
+		let
+		    Source =  fn_requestView(   
+		            "Sales Plan"
+		            , "View1"
+		            , 3
+		    )
+		in
+		    Source
+		```
+	lineageTag: b4deb436-bc28-47ae-9543-de3652d546b2
+	queryGroup: HttpRequests
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Record
+
+/// Mandatory if the server security mode is set to CAM authentication
+expression NAMESPACE = null meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+	lineageTag: 917fc351-b325-428d-8bd9-71e2af6a9e9f
+	queryGroup: Params
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Null
+

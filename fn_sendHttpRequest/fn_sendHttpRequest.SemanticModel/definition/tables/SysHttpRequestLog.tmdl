@@ -1,0 +1,188 @@
+table SysHttpRequestLog
+	lineageTag: 09fd2e06-c46d-40d0-b21a-9bf83e374c63
+
+	column Name
+		dataType: string
+		lineageTag: 7d1e77f3-e8d6-4376-83eb-2e5558ed563d
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Group
+		dataType: string
+		lineageTag: 44fba1be-b1c2-4b21-8258-55d101dd9f91
+		summarizeBy: none
+		sourceColumn: Group
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequstNo
+		dataType: int64
+		formatString: 0
+		lineageTag: 845f765f-021a-4ed7-9ca8-2e555984e7d9
+		summarizeBy: none
+		sourceColumn: RequstNo
+
+		annotation SummarizationSetBy = User
+
+	column RequestContent
+		dataType: string
+		lineageTag: 0c5f8e58-b950-4a41-ac4a-53ab12a0eeed
+		summarizeBy: none
+		sourceColumn: RequestContent
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestBody
+		dataType: string
+		lineageTag: c93225ab-37ab-4441-8307-2ae1a909264d
+		summarizeBy: none
+		sourceColumn: RequestBody
+
+		annotation SummarizationSetBy = Automatic
+
+	column AttemptNo
+		dataType: int64
+		formatString: 0
+		lineageTag: 049dd557-8a65-4bef-93e2-7ae89089a433
+		summarizeBy: none
+		sourceColumn: AttemptNo
+
+		annotation SummarizationSetBy = User
+
+	column RequestResponseTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0384840e-84c0-462a-b301-6a70925ecf71
+		summarizeBy: none
+		sourceColumn: RequestResponseTime
+
+		variation Variation
+			isDefault
+			relationship: ff5b1c50-d990-4af9-ae4f-7e2140c4e04d
+			defaultHierarchy: LocalDateTable_5d7457ce-f585-4cd5-827b-93066873f365.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestDelay
+		dataType: double
+		formatString: 0
+		lineageTag: 89524e95-c6e5-44a3-abab-c766a9d6ad62
+		summarizeBy: none
+		sourceColumn: RequestDelay
+
+		annotation SummarizationSetBy = User
+
+	column HttpResponseStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 3693419c-0233-477b-9e76-7168225707d5
+		summarizeBy: sum
+		sourceColumn: HttpResponseStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsEmpty
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 69333e71-9524-4141-a4db-1f6c516c71e1
+		summarizeBy: none
+		sourceColumn: IsEmpty
+
+		annotation SummarizationSetBy = Automatic
+
+	column HasConnectionError
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: b0056ee4-9257-42dd-b250-c6f73a195f6a
+		summarizeBy: none
+		sourceColumn: HasConnectionError
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConnectionErrorReason
+		dataType: string
+		lineageTag: b946cffb-4837-40c9-aced-7be7efd9871b
+		summarizeBy: none
+		sourceColumn: ConnectionErrorReason
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConnectionErrorMessage
+		dataType: string
+		lineageTag: 88bf6057-bec8-4d2d-a395-d1c17a971f37
+		summarizeBy: none
+		sourceColumn: ConnectionErrorMessage
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConnectionErrorDetails
+		dataType: string
+		lineageTag: 11d9eeb9-46d1-4993-81a5-adbc8295f7cd
+		summarizeBy: none
+		sourceColumn: ConnectionErrorDetails
+
+		annotation SummarizationSetBy = Automatic
+
+	column ResponseErrorCode
+		dataType: string
+		lineageTag: a4e7695e-c777-4f70-91db-581aded0220a
+		summarizeBy: none
+		sourceColumn: ResponseErrorCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column ResponseErrorMessage
+		dataType: string
+		lineageTag: 3908b470-d606-4ffd-82ba-023ba1c7f0b0
+		summarizeBy: none
+		sourceColumn: ResponseErrorMessage
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SysHttpRequestLog = m
+		mode: import
+		queryGroup: Logging
+		source = ```
+				let
+				    Source = SysHttpRequestData,
+				
+				    CheckEmptiness = Table.AddColumn(SysHttpRequestData, "IsEmpty", each 
+				                                                                            (try Record.FieldCount([Data]) = 0 otherwise true) 
+				                                                                        and (try List.IsEmpty([Data][value]) otherwise true) 
+				                                                                        and (try List.IsEmpty([Data][Cells]) otherwise true), 
+				                                                                        type logical
+				                                    ),
+				    ExpendResponseRecord = Table.ExpandRecordColumn(CheckEmptiness, "Data", {"@metadata", "error"}),
+				    ExpandMetadataTable = Table.ExpandTableColumn(ExpendResponseRecord, "@metadata", {
+				                                                                                        "RequstNo"
+				                                                                                        , "RequestContent"
+				                                                                                        , "RequestBody"
+				                                                                                        , "AttemptNo"
+				                                                                                        , "RequestResponseTime"
+				                                                                                        , "RequestDelay"
+				                                                                                        , "HasConnectionError"
+				                                                                                        , "ConnectionErrorReason"
+				                                                                                        , "ConnectionErrorMessage"
+				                                                                                        , "ConnectionErrorDetails"
+				                                                                                        , "HttpResponseStatus"
+				                                                                                    }
+				                                                ),
+				    ExpendErrorRecord = Table.ExpandRecordColumn(ExpandMetadataTable, "error", {"code", "message"}, {"ResponseErrorCode", "ResponseErrorMessage"}),
+				    TransformColumnTypes = Table.TransformColumnTypes(ExpendErrorRecord, {
+				                                                                            {"RequstNo", Int64.Type}
+				                                                                            , {"AttemptNo", Int64.Type}
+				                                                                            , {"RequestResponseTime", type datetime}
+				                                                                            , {"RequestDelay", type number}
+				                                                                            , {"HasConnectionError", type logical}
+				                                                                            , {"HttpResponseStatus", Int64.Type}	
+				    })
+				in
+				    TransformColumnTypes
+				```
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

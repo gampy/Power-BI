@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "extractAndTabulateDataFromTM1"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "eabd3295-14c3-45f1-9b38-496266a44e60"
+  }
+}

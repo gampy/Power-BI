@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "fn_sendHttpRequest"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "46296d8a-9c21-40d3-ac34-f2ae79d7a3fc"
+  }
+}

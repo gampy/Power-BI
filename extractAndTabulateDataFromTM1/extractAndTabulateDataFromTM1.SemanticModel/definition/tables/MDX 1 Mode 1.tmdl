@@ -1,0 +1,81 @@
+table 'MDX 1 Mode 1'
+	lineageTag: a9c2d98e-2649-4819-9c53-b7ee9796b53c
+
+	column 'Tuples.Ordinal'
+		dataType: string
+		lineageTag: 95115a1c-0eef-411b-b11b-9f23052c3a40
+		summarizeBy: none
+		sourceColumn: Tuples.Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: string
+		lineageTag: c53511b4-290e-414e-ba21-b1f1a147b627
+		summarizeBy: none
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+	column Months
+		dataType: string
+		lineageTag: 83b915a4-ac55-48e4-adba-1f2ea89fb5e0
+		summarizeBy: none
+		sourceColumn: Months
+
+		annotation SummarizationSetBy = Automatic
+
+	column Versions
+		dataType: string
+		lineageTag: 2468f5ef-376c-452b-a2b5-12a78e3ab3f7
+		summarizeBy: none
+		sourceColumn: Versions
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channels
+		dataType: string
+		lineageTag: a482a8c7-0b0c-438c-9c5d-0a6f96f178c1
+		summarizeBy: none
+		sourceColumn: Channels
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsidiaries
+		dataType: string
+		lineageTag: bbec84b3-fe9d-4961-8bc4-b6b2e3d489f1
+		summarizeBy: none
+		sourceColumn: Subsidiaries
+
+		annotation SummarizationSetBy = Automatic
+
+	column Products
+		dataType: string
+		lineageTag: 424f87aa-890f-4271-b193-31165d382ac4
+		summarizeBy: none
+		sourceColumn: Products
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales Plan Measures'
+		dataType: string
+		lineageTag: 8086b510-165f-40e9-af56-717bb808264b
+		summarizeBy: none
+		sourceColumn: Sales Plan Measures
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'MDX 1 Mode 1' = m
+		mode: import
+		queryGroup: 'Cube Data'
+		source =
+				let
+				    Source =  #"query MDX 1 Mode 1",
+				    Result = fn_tabulateCubeData(Source[Cells], Source[Axes])
+				in
+				    Result
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

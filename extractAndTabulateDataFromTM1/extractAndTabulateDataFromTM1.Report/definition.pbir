@@ -1,8 +1,8 @@
 {
-  "version": "1.0",
+  "version": "4.0",
   "datasetReference": {
     "byPath": {
-      "path": "../extractAndTabulateDataFromTM1.Dataset"
+      "path": "../extractAndTabulateDataFromTM1.SemanticModel"
     },
     "byConnection": null
   }
