@@ -1,0 +1,350 @@
+table 'Measures Amount'
+	lineageTag: 297e9b4f-b8a1-497f-b595-cb40303bf907
+
+	measure 'Num. of visitors' = SUM('Data'[Number of visitors])
+		displayFolder: Num. of visitors
+		lineageTag: 79820a2b-2c85-487a-87cb-7ff254c1aa64
+
+		formatStringDefinition =
+				IF(NOT [Tooltip?],
+				    VAR _ratio = DIVIDE([Num. of visitors Avg], [Num. of visitors Max])
+				    VAR _lineCapacity = MROUND(_ratio, DIVIDE(1, [Benchmark line capacity])) * [Benchmark line capacity]
+				    VAR _line = IF(_lineCapacity - 1 > 0,  _lineCapacity - 1, 0)
+				    RETURN REPT(UNICHAR( 9188 ), _line) & IF (_ratio > 0, UNICHAR( 9679 ), " ")
+				    , "#,##0;(#,##0)"
+				)
+
+	measure 'Units sold' = SUM(Data[Units sold])
+		displayFolder: Units sold
+		lineageTag: 259efd4a-d7a4-4314-95e6-34413a686a1f
+
+		formatStringDefinition =
+				IF(NOT [Tooltip?],
+				    VAR _ratio = DIVIDE([Units sold Avg], [Units sold Max])
+				    VAR _lineCapacity = MROUND(_ratio, DIVIDE(1, [Benchmark line capacity])) * [Benchmark line capacity]
+				    VAR _line = IF(_lineCapacity - 1 > 0,  _lineCapacity - 1, 0)
+				    RETURN REPT(UNICHAR( 9188 ), _line) & IF (_ratio > 0, UNICHAR( 9679 ), " ")
+				    , "#,##0;(#,##0)"
+				)
+
+	measure 'Num. of trans.' = SUM('Data'[Number of transactions])
+		displayFolder: Num. of trans.
+		lineageTag: 7e7bd4d7-a641-4238-baf1-b045f43527e9
+
+		formatStringDefinition =
+				IF(NOT [Tooltip?],
+				    VAR _ratio = DIVIDE([Num. of trans. Avg], [Num. of trans. Max])
+				    VAR _lineCapacity = MROUND(_ratio, DIVIDE(1, [Benchmark line capacity])) * [Benchmark line capacity]
+				    VAR _line = IF(_lineCapacity - 1 > 0,  _lineCapacity - 1, 0)
+				    RETURN REPT(UNICHAR( 9188 ), _line) & IF (_ratio > 0, UNICHAR( 9679 ), " ")
+				    , "#,##0;(#,##0)"
+				)
+
+	measure Sales = SUM(Data[Sales Revenue])
+		displayFolder: Sales
+		lineageTag: 6a77adfe-2284-4f67-b34d-f063c51a32ae
+
+		formatStringDefinition =
+				IF(NOT [Tooltip?],
+				    VAR _ratio = DIVIDE([Sales Avg], [Sales Max])
+				    VAR _lineCapacity = MROUND(_ratio, DIVIDE(1, [Benchmark line capacity])) * [Benchmark line capacity]
+				    RETURN REPT(UNICHAR( 9188 ), _lineCapacity) & IF (_ratio > 0, UNICHAR( 9679 ), " ")
+				    , "$#,##0;(#,##0)"
+				)
+
+	measure 'Benchmark line capacity' = 4
+		formatString: 0
+		lineageTag: 51317771-543c-41a7-8976-e8d0946ff9d0
+
+	measure 'Num. of trans. Avg' = ```
+			
+			    CALCULATE([Num. of trans.], ALL(Data[Week])) / COUNT(Weeks[Value])
+			```
+		formatString: #,##0;(#,##0)
+		displayFolder: Num. of trans.
+		lineageTag: 5581886c-de21-4d35-8f7f-9ada6579aa1e
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Units sold Avg' = ```
+			
+			    CALCULATE([Units sold], ALL(Data[Week])) / COUNT(Weeks[Value])
+			```
+		formatString: #,##0;(#,##0)
+		displayFolder: Units sold
+		lineageTag: d9067c85-e48c-44e4-9de8-b241950007e2
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Sales Avg' = ```
+			
+			    CALCULATE([Sales], ALL(Data[Week])) / COUNT(Weeks[Value])
+			```
+		formatString: $#,##0;(#,##0)
+		displayFolder: Sales
+		lineageTag: d32b3efd-a1e8-4034-8563-1c7aa7cc8c7e
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Num. of visitors Avg' = ```
+			
+			    CALCULATE([Num. of visitors], ALL(Data[Week])) / COUNT(Weeks[Value])
+			```
+		formatString: #,##0;(#,##0)
+		displayFolder: Num. of visitors
+		lineageTag: e99b9555-165e-4c33-bdc7-1f2839d5d9b9
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Num. of trans. Max' = ```
+			
+			    CALCULATE(MAX(Data[Number of transactions]), ALL(Data[Week]))
+			```
+		formatString: #,##0;(#,##0)
+		displayFolder: Num. of trans.
+		lineageTag: 15916c0a-ff9a-427a-9a07-0de84f789d41
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Num. of visitors Max' = ```
+			
+			    CALCULATE(MAX(Data[Number of visitors]), ALL(Data[Week]))
+			```
+		formatString: #,##0;(#,##0)
+		displayFolder: Num. of visitors
+		lineageTag: 5691eaf6-404b-43dc-880d-8f536aa5cf9b
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Sales Max' = ```
+			
+			    CALCULATE(MAX(Data[Sales Revenue]), ALL(Data[Week]))
+			```
+		formatString: #,##0;(#,##0)
+		displayFolder: Sales
+		lineageTag: 3e921078-a370-473f-95d9-1fe577b2b955
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Units sold Max' = ```
+			
+			    CALCULATE(MAX(Data[Units sold]), ALL(Data[Week]))
+			```
+		formatString: #,##0;(#,##0)
+		displayFolder: Units sold
+		lineageTag: d693c040-1767-45a8-af90-34485a554ac2
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure Tooltip? = SELECTEDVALUE(ReportContext[Mode]) = "Tooltip"
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		displayFolder: Tooltip
+		lineageTag: a7325fb1-c35f-47b5-ae04-45f4502673bc
+
+	measure 'Avg. trans. amount' = DIVIDE([Sales], [Num. of trans.], 0)
+		formatString: $#,##0;(#,##0)
+		displayFolder: Metrics
+		lineageTag: a34d492b-6e92-486c-b7c6-2a4c6a61af02
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Conversion rate' = DIVIDE([Num. of trans.], [Num. of visitors], 0)
+		formatString: 0%;-0%;0%
+		displayFolder: Metrics
+		lineageTag: ce2c47ee-a71c-4e91-8165-b398b0a287a0
+
+	measure 'Units per trans.' = DIVIDE([Units sold], [Num. of trans.], 0)
+		formatString: 0
+		displayFolder: Metrics
+		lineageTag: fd39a4fc-9d51-4f09-a45f-41fee07fa0f8
+
+	measure 'Revenue per visitor' = ```
+			DIVIDE([Sales], [Num. of visitors], 0) 
+			```
+		formatString: $#,##0;(#,##0)
+		displayFolder: Metrics
+		lineageTag: 871673b0-5377-4750-88b2-1aa09aaedbc3
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Tooltip title' = SELECTEDVALUE(Data[Day Of Week]) & " at " & SELECTEDVALUE(Data[Hour])
+		displayFolder: Tooltip
+		lineageTag: 7acba735-bebe-4535-b688-8a3d9145fb8c
+
+	measure 'Tooltip 2 clmn' = "Yearly average"
+		displayFolder: Tooltip
+		lineageTag: dd7fc8cc-e3ed-4b01-9af2-545d3ee7e0ae
+
+	measure 'Tooltip 1 clmn' = "On this day"
+		displayFolder: Tooltip
+		lineageTag: c5625c3b-2536-4758-ad53-8c568c9af8cf
+
+	measure 'Sales Prev. week ∆' = ```
+			
+			    CALCULATE([Sales], 'Tooltip Card'[Measure Group] = "PrevWeekDeviation")      
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Sales
+		lineageTag: cec82a74-3101-4e45-ac76-65d8497c4ec6
+
+	measure 'Sales Avg ∆' = ```
+			
+			    DIVIDE([Sales] - [Sales Avg], [Sales Avg], 0)
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Sales
+		lineageTag: 7a1c695b-9efe-4de8-bc06-6415f8fc36e0
+
+	measure 'Num. of trans. Prev. week ∆' = ```
+			
+			    CALCULATE([Num. of trans.], 'Tooltip Card'[Measure Group] = "PrevWeekDeviation")
+			        
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Num. of trans.
+		lineageTag: e4007402-bab6-4fba-83a6-8c289875914b
+
+	measure 'Num. of trans. Avg ∆' = ```
+			
+			    DIVIDE([Num. of trans.] - [Num. of trans. Avg], [Num. of trans. Avg], 0)
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Num. of trans.
+		lineageTag: fcc28336-d619-448d-a483-cc72b979c55c
+
+	measure 'Num. of visitors Prev. week ∆' = ```
+			
+			    CALCULATE([Num. of visitors], 'Tooltip Card'[Measure Group] = "PrevWeekDeviation")
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Num. of visitors
+		lineageTag: aa1804e0-eaa7-4de0-8e0c-10185d42f5c3
+
+	measure 'Num. of visitors Avg ∆' = ```
+			
+			    DIVIDE([Num. of visitors] - [Num. of visitors Avg], [Num. of visitors Avg], 0)
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Num. of visitors
+		lineageTag: 75ea1fb6-11a3-472c-932b-906761ad885e
+
+	measure 'Units sold Prev. week ∆' = ```
+			
+			    CALCULATE([Units sold], 'Tooltip Card'[Measure Group] = "PrevWeekDeviation")
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Units sold
+		lineageTag: 7f82ee4b-9513-4c18-b520-0b18a2c39a44
+
+	measure 'Units sold Avg ∆' = ```
+			
+			    DIVIDE([Units sold] - [Units sold Avg], [Units sold Avg], 0)
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Units sold
+		lineageTag: 5c6f5e38-b41f-4f1a-b2b6-f7b344867a93
+
+	measure 'Num. of trans. Color 1' = ```
+			
+			    VAR HexCode = CALCULATE([Num. of trans. Prev. week ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Num. of trans.
+		lineageTag: 781de261-11b3-43ed-bfdc-be6e7026c28a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Num. of trans. Color 2' = ```
+			
+			    VAR HexCode = CALCULATE([Num. of trans. Avg ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Num. of trans.
+		lineageTag: 8640ec6f-63c2-4e6e-bec1-2120ce0c4b01
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Num. of visitors Color 1' = ```
+			
+			    VAR HexCode = CALCULATE([Num. of visitors Prev. week ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Num. of visitors
+		lineageTag: cea4e6d1-6fa4-473f-8b15-e5ae794f1d4b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Num. of visitors Color 2' = ```
+			
+			    VAR HexCode = CALCULATE([Num. of visitors Avg ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Num. of visitors
+		lineageTag: e9590f47-ec01-4d33-8345-9a9f43b643eb
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sales Color 1' = ```
+			
+			    VAR HexCode = CALCULATE([Sales Prev. week ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Sales
+		lineageTag: 6600e038-a967-4988-9763-4584fdb5c9f3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sales Color 2' = ```
+			
+			    VAR HexCode = CALCULATE([Sales Avg ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Sales
+		lineageTag: a70b2df4-0f9a-489a-9541-4bfe68df42e5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Units sold Color 2' = ```
+			
+			    VAR HexCode = CALCULATE([Units sold Avg ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Units sold
+		lineageTag: 057c7c1c-dc64-4007-8429-c19a4063b65e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Units sold Color 1' = ```
+			
+			    VAR HexCode = CALCULATE([Units sold Prev. week ∆], 'Tooltip Card'[Measure Group] = "Color")
+			    RETURN
+			        HexCode & ""
+			```
+		displayFolder: Units sold
+		lineageTag: 4b22db1e-8202-4019-86b2-3541c6ca7ddf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Dummy
+		isHidden
+		formatString: 0
+		lineageTag: f8d51699-90a5-4c1e-9034-b5243ff97838
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Dummy]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Measures Amount' = calculated
+		mode: import
+		source = Row("Dummy", BLANK())
+
+	annotation PBI_Id = 06978f7b07f6428aa9334a09da7d4b59
+

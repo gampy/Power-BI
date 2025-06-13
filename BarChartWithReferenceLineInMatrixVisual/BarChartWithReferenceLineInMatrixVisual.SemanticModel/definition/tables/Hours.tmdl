@@ -1,0 +1,50 @@
+table Hours
+	lineageTag: f8da83e3-4a13-491a-b39d-e4f9935abb86
+
+	column Hour
+		lineageTag: 38aac8d3-6a59-4ba1-bb54-7ec9b83e299f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Hour]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		formatString: 0
+		lineageTag: 19d20207-2abc-4129-8db0-4d1e1688bc22
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	column H_Coeff
+		lineageTag: 63cc7c3a-390d-4205-a313-730f87ac3833
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [H_Coeff]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Hours = calculated
+		mode: import
+		source = ```
+				
+				        ADDCOLUMNS(
+				            GENERATESERIES(8, 23, 1),
+				            "Hour", FORMAT([Value], "00") & ":00",
+				            "H_Coeff",
+				                VAR HourValue = [Value]
+				                VAR Peak1 = 10
+				                VAR Peak2 = 19
+				                VAR Sigma = 2.6
+				                VAR Coeff1 = EXP(-POWER(HourValue - Peak1, 2) / (2 * POWER(Sigma, 2)))
+				                VAR Coeff2 = EXP(-POWER(HourValue - Peak2, 2) / (2 * POWER(Sigma, 2)))
+				                RETURN Coeff1 + Coeff2
+				        )
+				```
+
+	annotation PBI_Id = 826480fcad284f6eb87548f49bc8bd3b
+

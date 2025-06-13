@@ -1,0 +1,125 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 299,
+        "y": 448
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 554,
+            "y": 974.234375
+          },
+          "nodeIndex": "Hours",
+          "nodeLineageTag": "f8da83e3-4a13-491a-b39d-e4f9935abb86",
+          "size": {
+            "height": 215,
+            "width": 257
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 920,
+            "y": 308.234375
+          },
+          "nodeIndex": "DaysOfWeek",
+          "nodeLineageTag": "c1f2f681-ca40-4e32-8f42-c73d92a5d79c",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 549,
+            "y": 583.234375
+          },
+          "nodeIndex": "Data",
+          "nodeLineageTag": "7716ad1c-8f46-483d-b267-30b0fc297cab",
+          "size": {
+            "height": 244,
+            "width": 268
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 198,
+            "y": 300.234375
+          },
+          "nodeIndex": "Weeks",
+          "nodeLineageTag": "832ca7ef-a1a5-4488-a735-d9614ad48861",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1280,
+            "y": 724.734375
+          },
+          "nodeIndex": "Measures Amount",
+          "nodeLineageTag": "297e9b4f-b8a1-497f-b595-cb40303bf907",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1277,
+            "y": 522.734375
+          },
+          "nodeIndex": "Parameter",
+          "nodeLineageTag": "5ba28c7d-df0f-4782-aaad-fd8e241b9a76",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1281,
+            "y": 954.984375
+          },
+          "nodeIndex": "ReportContext",
+          "nodeLineageTag": "d9f517c8-0d7a-4f08-8187-e634cb2f2916",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1367,
+            "y": 483.015625
+          },
+          "nodeIndex": "Tooltip Card",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

@@ -1,0 +1,26 @@
+table ReportContext
+	lineageTag: d9f517c8-0d7a-4f08-8187-e634cb2f2916
+
+	column Mode
+		lineageTag: 9bf36b85-223b-487f-aa2f-60a134a22f51
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mode]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ReportContext = calculated
+		mode: import
+		source = ```
+				
+				    DATATABLE(
+				    "Mode", STRING,
+				        { 
+				              {"Matrix"}
+				            , {"Tooltip"}
+				        }
+				    )
+				```
+
+	annotation PBI_Id = 49edea40ccc048dabd12fc0766d637da
+

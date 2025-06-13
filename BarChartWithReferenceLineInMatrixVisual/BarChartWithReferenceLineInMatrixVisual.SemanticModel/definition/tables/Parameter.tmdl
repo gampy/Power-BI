@@ -1,0 +1,50 @@
+table Parameter
+	lineageTag: 5ba28c7d-df0f-4782-aaad-fd8e241b9a76
+
+	column Parameter
+		lineageTag: 9077dc44-8af8-4d05-adad-eff3421f1289
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Fields'
+		isHidden
+		lineageTag: c2f5a511-9bea-444f-8e3e-5b787c985649
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 3fe89f04-6a98-482e-b9ab-5feb349d31ed
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Parameter = calculated
+		mode: import
+		source =
+				{
+				    ("Units Sold", NAMEOF('Measures Amount'[Units sold]), 0),
+				    ("Num. of transactions", NAMEOF('Measures Amount'[Num. of trans.]), 1),
+				    ("Num. of visitors", NAMEOF('Measures Amount'[Num. of visitors]), 2),
+				    ("Sales Revenue", NAMEOF('Measures Amount'[Sales]), 3)
+				}
+
+	annotation PBI_Id = 05fad0fea6744363946e810f71f3b714
+

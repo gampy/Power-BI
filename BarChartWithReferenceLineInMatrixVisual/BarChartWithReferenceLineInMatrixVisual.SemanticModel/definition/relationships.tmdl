@@ -1,0 +1,12 @@
+relationship 44a943c8-8fb3-14c4-b3c1-78ab0cf9c8da
+	fromColumn: Data.Week
+	toColumn: Weeks.Value
+
+relationship f226c552-a320-e491-fb02-80c976b0ac65
+	fromColumn: Data.'Day Of Week'
+	toColumn: DaysOfWeek.'Day Of Week'
+
+relationship bb9b030c-648d-3368-0c93-3a7b5739d4ec
+	fromColumn: Data.Hour
+	toColumn: Hours.Hour
+

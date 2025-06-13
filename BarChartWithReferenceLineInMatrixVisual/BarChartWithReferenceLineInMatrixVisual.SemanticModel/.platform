@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "BarChartWithReferenceLineInMatrixVisual"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d5f4e991-33ff-4e3a-b8e9-094adaab6eab"
+  }
+}

@@ -1,0 +1,46 @@
+table 'Tooltip Card'
+	lineageTag: 08845754-4315-436c-9371-c321787c3d9f
+
+	calculationGroup
+
+		calculationItem Color = ```
+				
+				    VAR Dev = SELECTEDMEASURE()
+				        VAR HexCode =
+				        SWITCH(
+				            TRUE(),
+				            Dev <  0, "#900000", //"Negative",
+				            Dev =  0, "#334391", //"Zero",
+				            Dev >  0, "#0B912C", //"Positive",
+				            BLANK()
+				        )
+				        RETURN
+				            HexCode
+				```
+
+		calculationItem PrevWeekDeviation = ```
+				
+				    VAR CurrWeek = SELECTEDVALUE( Data[Week] )
+				    VAR PrevWeekValue = CALCULATE(SELECTEDMEASURE(), ALL( Data[Week] ), Data[Week] = CurrWeek - 1 )
+				    RETURN
+				        DIVIDE(SELECTEDMEASURE() - PrevWeekValue, PrevWeekValue, 0) 
+				```
+
+	column 'Measure Group'
+		dataType: string
+		lineageTag: 3535fddb-1b75-4523-98a6-77665873075c
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 4da83da9-b345-4b15-9931-eade8d5778d2
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+

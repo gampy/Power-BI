@@ -1,0 +1,18 @@
+table Weeks
+	lineageTag: 832ca7ef-a1a5-4488-a735-d9614ad48861
+
+	column Value
+		formatString: 0
+		lineageTag: dd3bbfc2-7c14-4ea0-9e9f-a93db5f0693e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Weeks = calculated
+		mode: import
+		source = GENERATESERIES(1, 52, 1)
+
+	annotation PBI_Id = 3b1a2c3916c34cfa99904de7d749e17d
+

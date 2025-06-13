@@ -1,0 +1,96 @@
+table Data
+	lineageTag: 7716ad1c-8f46-483d-b267-30b0fc297cab
+
+	column Week
+		formatString: 0
+		lineageTag: 84230e98-891d-4adc-9bfe-04dc58f23cbc
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Week]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day Of Week'
+		lineageTag: 8e91f6d2-92aa-42a1-a1fe-ccd6638aae6d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Day Of Week]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hour
+		lineageTag: e8762948-3f7f-4ce0-8eaa-5df217286fe3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Hour]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales Revenue'
+		lineageTag: 0564b92d-f227-45f6-8280-afc2a31dc824
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sales Revenue]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Units sold'
+		lineageTag: acb947db-ece5-43a9-b0b6-e9b310dd5568
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Units sold]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Number of visitors'
+		lineageTag: dbec2f07-ca1a-4448-ad6d-18ce055769f2
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Number of visitors]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Number of transactions'
+		lineageTag: 9d55fd04-7db3-423c-98aa-181c8df4fa10
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Number of transactions]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Data = calculated
+		mode: import
+		source = ```
+				
+				    VAR Source = 
+				        ADDCOLUMNS(
+				            CROSSJOIN(SELECTCOLUMNS(Weeks, "Week", [Value]), DaysOfWeek, Hours)
+				            , "Number of visitors", ROUND(RANDBETWEEN( 500, 1500 ) * DaysOfWeek[DOW_Coeff] * Hours[H_Coeff], 0)
+				            , "Number of transactions", ROUND(RANDBETWEEN( 0, 800 ) * DaysOfWeek[DOW_Coeff] * Hours[H_Coeff], 0)
+				        )
+				
+				    RETURN
+				        ADDCOLUMNS(
+				            SELECTCOLUMNS(
+				                Source
+				                , "Week", [Week]
+				                , "Day Of Week", [Day Of Week]
+				                , "Hour", [Hour]
+				                , "Number of visitors", [Number of visitors]
+				                , "Number of transactions", [Number of transactions]
+				            )
+				            , "Units sold", ROUND([Number of transactions] * RANDBETWEEN(1, 5), 0)
+				            , "Sales Revenue", ROUND([Number of transactions] * RANDBETWEEN(5, 100), 0)
+				        )
+				```
+
+	annotation PBI_Id = 661a4c6936364094aa7b30788141896f
+
